@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1095997223006",
+    "firebase_url": "https://android-webrtc-master-ea6f9.firebaseio.com",
+    "project_id": "android-webrtc-master-ea6f9",
+    "storage_bucket": "android-webrtc-master-ea6f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1095997223006:android:3e2c94533931cc0a",
+        "android_client_info": {
+          "package_name": "com.myhexaville.androidwebrtc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1095997223006-06s4gfej7mu4kbi19i8d9ukr0m6erkif.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myhexaville.androidwebrtc",
+            "certificate_hash": "e2accb698e0e76204e599e39c885165ee3500f0d"
+          }
+        },
+        {
+          "client_id": "1095997223006-2te96cf4c7v8apbkbvactggeftjjg3q7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4UxHtE5PwF6suFvMqh1L6om-kKHWwJwk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1095997223006-2te96cf4c7v8apbkbvactggeftjjg3q7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
