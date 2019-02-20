@@ -4,7 +4,7 @@
             "outputFile": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ldltr-v21/values-ldltr-v21.xml",
             "map": [
                 {
-                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/6ab811e1ff9c8570579156a34cf81ec3/res/values-ldltr-v21/values-ldltr-v21.xml",
+                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/f161a7f8d4e5e880b5e9a852f2ff3a26/res/values-ldltr-v21/values-ldltr-v21.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

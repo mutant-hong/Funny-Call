@@ -41,9 +41,19 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
         }
 
         else{
-            sendNotification(title, body);
+            //sendNotification(title, body);
+            sendCallingActivity(title, body);
         }
 
+    }
+
+    //전화온 화면으로 이동
+    private void sendCallingActivity(String title, String messageBody){
+        Intent intent = new Intent(this, CallingActivity.class);
+        intent.putExtra("friendId", title);
+        intent.putExtra("caller", "false");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     //영상 통화 알림

@@ -4,26 +4,7 @@
             "outputFile": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v26/values-v26.xml",
             "map": [
                 {
-                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/design-27.1.0.aar/b3471e11570a2fa18e1264cddbf9d229/res/values-v26/values-v26.xml",
-                    "from": {
-                        "startLines": "2,6",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,299",
-                        "endLines": "5,6",
-                        "endColumns": "12,96",
-                        "endOffsets": "294,391"
-                    },
-                    "to": {
-                        "startLines": "16,21",
-                        "startColumns": "4,4",
-                        "startOffsets": "896,1233",
-                        "endLines": "19,21",
-                        "endColumns": "12,96",
-                        "endOffsets": "1135,1325"
-                    }
-                },
-                {
-                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/6ab811e1ff9c8570579156a34cf81ec3/res/values-v26/values-v26.xml",
+                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/f161a7f8d4e5e880b5e9a852f2ff3a26/res/values-v26/values-v26.xml",
                     "from": {
                         "startLines": "2,3,4,8,12,16",
                         "startColumns": "4,4,4,4,4,4",
@@ -39,6 +20,25 @@
                         "endLines": "2,3,7,11,15,20",
                         "endColumns": "74,86,12,12,12,92",
                         "endOffsets": "125,212,426,652,891,1228"
+                    }
+                },
+                {
+                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/design-27.1.0.aar/04fb818c64b847cdba1c7323d7a630eb/res/values-v26/values-v26.xml",
+                    "from": {
+                        "startLines": "2,6",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,299",
+                        "endLines": "5,6",
+                        "endColumns": "12,96",
+                        "endOffsets": "294,391"
+                    },
+                    "to": {
+                        "startLines": "16,21",
+                        "startColumns": "4,4",
+                        "startOffsets": "896,1233",
+                        "endLines": "19,21",
+                        "endColumns": "12,96",
+                        "endOffsets": "1135,1325"
                     }
                 }
             ]

@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.myhexaville.androidwebrtc.app_rtc_sample.main.AppRTCMainActivity;
@@ -21,7 +20,7 @@ public class mainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static class mainViewHolder extends RecyclerView.ViewHolder {
 
         TextView friendId;
-        ImageView call;
+        //ImageView call;
         public final View mView;
 
         mainViewHolder(View view) {
@@ -29,7 +28,7 @@ public class mainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             mView = view;
 
             friendId = view.findViewById(R.id.friendId);
-            call = view.findViewById(R.id.call);
+            //call = view.findViewById(R.id.call);
 
         }
 
@@ -55,9 +54,10 @@ public class mainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         final mainViewHolder myViewHolder = (mainViewHolder) holder;
 
         myViewHolder.friendId.setText(friendslist.get(position));
-        myViewHolder.call.setTag(holder.getAdapterPosition());
+        myViewHolder.friendId.setTag(holder.getAdapterPosition());
+        //myViewHolder.call.setTag(holder.getAdapterPosition());
 
-        myViewHolder.call.setOnClickListener(new View.OnClickListener() {
+        myViewHolder.friendId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 context = v.getContext();

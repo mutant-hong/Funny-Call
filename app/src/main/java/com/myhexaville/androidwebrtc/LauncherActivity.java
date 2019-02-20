@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -46,6 +47,9 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
     //새로고침
     SwipeRefreshLayout swipeRefreshLayout;
 
+    //opencv 테스트 버튼
+    Button opencv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +62,9 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
         friends = (ImageView)findViewById(R.id.friends);
 
         userId = (TextView)findViewById(R.id.userId);
+
+        //opencv 테스트 버튼
+        opencv = (Button)findViewById(R.id.opencv);
 
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -93,7 +100,7 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
                 Intent intent = new Intent(getApplicationContext(), MediaStreamActivity.class);
                 startActivity(intent);
                 //overridePendingTransition(0,0);
-                finish();
+                //finish();
             }
         });
 
@@ -104,6 +111,15 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
                 startActivity(intent);
                 overridePendingTransition(0,0);
                 finish();
+            }
+        });
+
+        //opencv 테스트 버튼
+        opencv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), OpencvActivity.class);
+                startActivity(intent);
             }
         });
     }

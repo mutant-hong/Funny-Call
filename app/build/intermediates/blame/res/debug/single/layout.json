@@ -8,15 +8,15 @@
         "source": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/res/layout/activity_sample_data_channel.xml"
     },
     {
+        "merged": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/activity_main.xml",
+        "source": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/res/layout/activity_main.xml"
+    },
+    {
         "merged": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/activity_call.xml",
         "source": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/res/layout/activity_call.xml"
     },
     {
         "merged": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/activity_sample_camera_render.xml",
         "source": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/res/layout/activity_sample_camera_render.xml"
-    },
-    {
-        "merged": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/activity_main.xml",
-        "source": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/res/layout/activity_main.xml"
     }
 ]

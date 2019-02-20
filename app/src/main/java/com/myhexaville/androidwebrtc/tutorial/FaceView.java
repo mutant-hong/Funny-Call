@@ -23,19 +23,18 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+import android.view.View;
 
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.Landmark;
-
-import org.webrtc.SurfaceViewRenderer;
 
 /**
  * View which displays a bitmap containing a face along with overlay graphics that identify the
  * locations of detected facial landmarks.
  */
-public class FaceView extends SurfaceViewRenderer {
-    private Bitmap mBitmap;
-    private SparseArray<Face> mFaces;
+public class FaceView extends View {
+    public static Bitmap mBitmap;
+    public static SparseArray<Face> mFaces;
 
     public FaceView(Context context, AttributeSet attrs) {
         super(context, attrs);

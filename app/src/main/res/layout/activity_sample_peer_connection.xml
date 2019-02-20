@@ -33,47 +33,22 @@
                 android:layout_height="150dp"
                 android:id="@+id/faceView"/>
 -->
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/image"/>
-                
-            </FrameLayout>
-
-<!--
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <org.webrtc.SurfaceViewRenderer
-                    android:id="@+id/surface_view3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="From bitmap"
-                    android:layout_gravity="top|end"
-                    android:textColor="#fff"
-                    android:layout_margin="16dp"
-                    android:layout_height="wrap_content" />
-            </FrameLayout>
--->
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <org.webrtc.SurfaceViewRenderer
+                <com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.SurfaceViewRenderer
                     android:id="@+id/surface_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/image"
+                    android:scaleType="fitXY"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -89,10 +64,16 @@
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
-                <org.webrtc.SurfaceViewRenderer
+                <com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.SurfaceViewRenderer
                     android:id="@+id/surface_view2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/image2"
+                    android:scaleType="fitXY"/>
 
                 <TextView
                     android:layout_width="wrap_content"

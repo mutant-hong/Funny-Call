@@ -4,7 +4,7 @@
             "outputFile": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-zh/values-zh.xml",
             "map": [
                 {
-                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/android-image-cropper-2.6.0.aar/f344b750d851d1e207da34bef0ffa21c/res/values-zh/values-zh.xml",
+                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/android-image-cropper-2.6.0.aar/dd2d4ad66cfa142f7d49c179b392d8cd/res/values-zh/values-zh.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

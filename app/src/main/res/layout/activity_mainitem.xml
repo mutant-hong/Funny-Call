@@ -23,5 +23,6 @@
         android:layout_marginRight="10dp"
         android:id="@+id/call"
         app:srcCompat="@drawable/call"
-        android:text="수락"/>
+        android:text="수락"
+        android:visibility="gone"/>
 </LinearLayout>

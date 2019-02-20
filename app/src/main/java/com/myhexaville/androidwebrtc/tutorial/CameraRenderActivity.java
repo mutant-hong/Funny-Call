@@ -1,14 +1,9 @@
 package com.myhexaville.androidwebrtc.tutorial;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.android.gms.vision.MultiProcessor;
-import com.google.android.gms.vision.Tracker;
-import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.databinding.ActivitySampleCameraRenderBinding;
 
@@ -32,11 +27,7 @@ public class CameraRenderActivity extends AppCompatActivity {
     public static final int VIDEO_RESOLUTION_HEIGHT = 720;
     public static final int FPS = 30;
 
-    //private ActivitySampleCameraRenderBinding binding;
     private ActivitySampleCameraRenderBinding binding;
-
-    private CameraSourcePreview mPreview;
-    private GraphicOverlay mGraphicOverlay;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,25 +35,11 @@ public class CameraRenderActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sample_camera_render);
 
-        //mGraphicOverlay = (GraphicOverlay) findViewById(R.id.faceOverlay);
-
         // Create video renderers.
         EglBase rootEglBase = EglBase.create();
         binding.surfaceView.init(rootEglBase.getEglBaseContext(), null);
         binding.surfaceView.setEnableHardwareScaler(true);
         binding.surfaceView.setMirror(true);
-
-        Context context = getApplicationContext();
-        FaceDetector detector = new FaceDetector.Builder(context)
-                //.setTrackingEnabled(true)
-                //.setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                .build();
-
-        detector.setProcessor(
-                new MultiProcessor.Builder<>(new GraphicFaceTrackerFactory())
-                        .build());
-
 
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory factory = new PeerConnectionFactory(null);
@@ -131,70 +108,5 @@ public class CameraRenderActivity extends AppCompatActivity {
     * */
     private boolean useCamera2() {
         return Camera2Enumerator.isSupported(this);
-    }
-
-    //==============================================================================================
-    // Graphic Face Tracker
-    //==============================================================================================
-
-    /**
-     * Factory for creating a face tracker to be associated with a new face.  The multiprocessor
-     * uses this factory to create face trackers as needed -- one for each individual.
-     */
-    private class GraphicFaceTrackerFactory implements MultiProcessor.Factory<Face> {
-        @Override
-        public Tracker<Face> create(Face face) {
-            return new GraphicFaceTracker(mGraphicOverlay);
-        }
-    }
-
-    /**
-     * Face tracker for each detected individual. This maintains a face graphic within the app's
-     * associated face overlay.
-     */
-    private class GraphicFaceTracker extends Tracker<Face> {
-        private GraphicOverlay mOverlay;
-        private FaceGraphic mFaceGraphic;
-
-        GraphicFaceTracker(GraphicOverlay overlay) {
-            mOverlay = overlay;
-            mFaceGraphic = new FaceGraphic(overlay);
-        }
-
-        /**
-         * Start tracking the detected face instance within the face overlay.
-         */
-        @Override
-        public void onNewItem(int faceId, Face item) {
-            mFaceGraphic.setId(faceId);
-        }
-
-        /**
-         * Update the position/characteristics of the face within the overlay.
-         */
-        @Override
-        public void onUpdate(FaceDetector.Detections<Face> detectionResults, Face face) {
-            mOverlay.add(mFaceGraphic);
-            mFaceGraphic.updateFace(face);
-        }
-
-        /**
-         * Hide the graphic when the corresponding face was not detected.  This can happen for
-         * intermediate frames temporarily (e.g., if the face was momentarily blocked from
-         * view).
-         */
-        @Override
-        public void onMissing(FaceDetector.Detections<Face> detectionResults) {
-            mOverlay.remove(mFaceGraphic);
-        }
-
-        /**
-         * Called when the face is assumed to be gone for good. Remove the graphic annotation from
-         * the overlay.
-         */
-        @Override
-        public void onDone() {
-            mOverlay.remove(mFaceGraphic);
-        }
     }
 }

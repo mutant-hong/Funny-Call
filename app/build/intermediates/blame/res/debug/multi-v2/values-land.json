@@ -4,7 +4,7 @@
             "outputFile": "/Users/jihongbyun/Downloads/Android-WebRtc-master/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-land/values-land.xml",
             "map": [
                 {
-                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/6ab811e1ff9c8570579156a34cf81ec3/res/values-land/values-land.xml",
+                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/appcompat-v7-27.1.1.aar/f161a7f8d4e5e880b5e9a852f2ff3a26/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/design-27.1.0.aar/b3471e11570a2fa18e1264cddbf9d229/res/values-land/values-land.xml",
+                    "source": "/Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/design-27.1.0.aar/04fb818c64b847cdba1c7323d7a630eb/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

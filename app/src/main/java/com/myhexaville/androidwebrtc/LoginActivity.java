@@ -51,14 +51,14 @@ public class LoginActivity extends AppCompatActivity {
         pref = getSharedPreferences("login", 0);
         editor = pref.edit();
 
-/*
-        SharedPreferences pref2 = getSharedPreferences("token", 0);
-        SharedPreferences.Editor editor2 = pref2.edit();
-        editor2.putString("token", "dfsGWaUc4MM:APA91bEMsMTy2ALM6jPbeFvdQnCMLi6mmf9A2z6necubCOTqFdQ3g3ljiO7dX-gFlSwV0nK9zTlHr9w0ynMCS5ECAsgrUXVzN7GWhV7X-OpcfVLFMMDOczaswbaBcclKSitKY0fh0g9s");
-        editor2.commit();
 
-        Toast.makeText(this, pref2.getString("token",""), Toast.LENGTH_SHORT).show();
-*/
+//        SharedPreferences pref2 = getSharedPreferences("token", 0);
+//        SharedPreferences.Editor editor2 = pref2.edit();
+//        editor2.putString("token", "cvlDghpE8PQ:APA91bEUVCTd2IgcGzl1L_qiDFtGCJuBOt7172Gyy03Wx0kuLRXO1c666mm6faIJftGOPbjSSEoGHwHZa6SjFaD5Ayb0xkww4X1VoV9cHTd0jEuthc7YwQmghSCRoed1x6A5lXiftoml");
+//        editor2.commit();
+//
+//        Toast.makeText(this, pref2.getString("token",""), Toast.LENGTH_SHORT).show();
+
     }
 
     @Override

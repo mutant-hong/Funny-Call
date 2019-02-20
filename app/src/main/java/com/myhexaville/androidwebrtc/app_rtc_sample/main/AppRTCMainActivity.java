@@ -19,22 +19,14 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.myhexaville.androidwebrtc.FriendsActivity;
 import com.myhexaville.androidwebrtc.LauncherActivity;
-import com.myhexaville.androidwebrtc.LoginActivity;
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.app_rtc_sample.call.CallActivity;
 import com.myhexaville.androidwebrtc.databinding.ActivityMainBinding;
-import com.myhexaville.androidwebrtc.friendsAdapter;
-import com.myhexaville.androidwebrtc.mainAdapter;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -42,7 +34,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -100,7 +91,8 @@ public class AppRTCMainActivity extends AppCompatActivity {
         myId = pref.getString("id","");
 
         //팝업창 yes or no 로 선택하게
-        binding.connectButton.performClick();
+        if(!caller.equals("true"))
+            binding.connectButton.performClick();
 
     }
 
@@ -139,10 +131,10 @@ public class AppRTCMainActivity extends AppCompatActivity {
             Log.d("apprtc", "2");
             //내가 걸었을때
             if(caller.equals("true"))
-                connectToRoom(myId+"-"+binding.roomEdittext.getText().toString());
+                connectToRoom(myId+"3"+binding.roomEdittext.getText().toString());
             //상대방에게 왔을때
             else
-                connectToRoom(binding.roomEdittext.getText().toString()+"-"+myId);
+                connectToRoom(binding.roomEdittext.getText().toString()+"3"+myId);
         } else {
             EasyPermissions.requestPermissions(this, "Need some permissions", RC_CALL, perms);
         }

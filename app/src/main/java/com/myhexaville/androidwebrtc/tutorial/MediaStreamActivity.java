@@ -1,18 +1,35 @@
 package com.myhexaville.androidwebrtc.tutorial;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.graphics.YuvImage;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.SparseArray;
 import android.widget.ImageView;
 
-import com.google.android.gms.vision.Frame;
-import com.google.android.gms.vision.face.Face;
-import com.google.android.gms.vision.face.FaceDetector;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
+import com.google.firebase.ml.vision.face.FirebaseVisionFace;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 import com.myhexaville.androidwebrtc.R;
+import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.EglRenderer;
 import com.myhexaville.androidwebrtc.databinding.ActivitySamplePeerConnectionBinding;
 
 import org.webrtc.Camera1Enumerator;
@@ -31,34 +48,102 @@ import org.webrtc.VideoRenderer;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
 
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
-import static android.graphics.ImageFormat.NV21;
 import static com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient.VIDEO_TRACK_ID;
 
 /*
-* Shows how to use PeerConnection to connect clients and stream video using MediaStream
-* without any networking
-* */
-public class MediaStreamActivity extends AppCompatActivity implements VideoRenderer.Callbacks {
+ * Shows how to use PeerConnection to connect clients and stream video using MediaStream
+ * without any networking
+ * */
+public class MediaStreamActivity extends AppCompatActivity {
     private static final String TAG = "SamplePeerConnectionAct";
     public static final int VIDEO_RESOLUTION_WIDTH = 1280;
     public static final int VIDEO_RESOLUTION_HEIGHT = 720;
-    public static final int FPS = 30;
+    public static final int FPS = 1;
     private static final String DTLS_SRTP_KEY_AGREEMENT_CONSTRAINT = "DtlsSrtpKeyAgreement";
 
-    public static ActivitySamplePeerConnectionBinding binding;
+    public ActivitySamplePeerConnectionBinding binding;
     public static EglBase rootEglBase;
     private VideoTrack videoTrackFromCamera;
     private PeerConnectionFactory factory;
     private PeerConnection localPeerConnection, remotePeerConnection;
 
-    ///
-    EasyrtcSingleFrameCapturer.BitmapListener gotFrameListener;
-    //EasyrtcSingleFrameCapturer.
-    ImageView imageView;
-    ///
+
+    ImageView imageView, imageView2;
+    Rect r, r2;
+    Bitmap mbitmap, mbitmap2;
+    Canvas canvas, canvas2;
+    Paint myPaint;
+
+    private Handler handler, handler2;
+    private HandlerThread handlerThread, handlerThread2;
+
+    //opencv 사용할때
+/*
+    private Mat matInput;
+    private Mat matResult;
+
+    public native long loadCascade(String cascadeFileName );
+    public native void detect(long cascadeClassifier_face, long cascadeClassifier_eye, long matAddrInput, long matAddrResult);
+    public long cascadeClassifier_face = 0;
+    public long cascadeClassifier_eye = 0;
+
+    static {
+        System.loadLibrary("opencv_java4");
+        System.loadLibrary("native-lib");
+
+        if(!OpenCVLoader.initDebug())
+            Log.d(TAG, "not loaded");
+        else
+            Log.d(TAG,"success");
+    }
+
+    private void copyFile(String filename) {
+        String baseDir = Environment.getExternalStorageDirectory().getPath();
+        String pathDir = baseDir + File.separator + filename;
+
+        AssetManager assetManager = this.getAssets();
+
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            Log.d( TAG, "copyFile :: 다음 경로로 파일복사 "+ pathDir);
+            inputStream = assetManager.open(filename);
+            outputStream = new FileOutputStream(pathDir);
+
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            inputStream.close();
+            inputStream = null;
+            outputStream.flush();
+            outputStream.close();
+            outputStream = null;
+        } catch (Exception e) {
+            Log.d(TAG, "copyFile :: 파일 복사 중 예외 발생 "+e.toString() );
+        }
+
+    }
+
+    private void read_cascade_file(){
+        copyFile("haarcascade_frontalface_alt.xml");
+        copyFile("haarcascade_eye_tree_eyeglasses.xml");
+
+        Log.d(TAG, "read_cascade_file:");
+
+        cascadeClassifier_face = loadCascade( "haarcascade_frontalface_alt.xml");
+        Log.d(TAG, "read_cascade_file:");
+
+        cascadeClassifier_eye = loadCascade( "haarcascade_eye_tree_eyeglasses.xml");
+    }
+*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,55 +151,20 @@ public class MediaStreamActivity extends AppCompatActivity implements VideoRende
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sample_peer_connection);
 
         imageView = (ImageView)findViewById(R.id.image);
+        imageView2 = (ImageView)findViewById(R.id.image2);
 
-        gotFrameListener = theBitmap -> {
-            Log.e(TAG, "got bitmap!");
+        DisplayMetrics dm = getApplicationContext().getResources().getDisplayMetrics();
 
-            /*
-            ImageView imageView = findViewById(R.id.object_preview);
-            imageView.setImageBitmap(theBitmap);
+        int width = dm.widthPixels;
 
-            imageView.setVisibility(View.VISIBLE);
-            */
+        int height = dm.heightPixels;
 
-            imageView.setImageBitmap(theBitmap);
+        Log.d("size", width + ", " + height);
 
-            /*
-            FaceDetector detector = new FaceDetector.Builder(getApplicationContext())
-                    .setTrackingEnabled(false)
-                    .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                    .build();
-
-            Detector<Face> safeDetector = new SafeFaceDetector(detector);
-
-            Frame frame = new Frame.Builder().setBitmap(theBitmap).build();
-            SparseArray<Face> faces = safeDetector.detect(frame);
-*/
-            //FaceView overlay = (FaceView) findViewById(R.id.faceView);
-            //overlay.setContent(theBitmap, faces);
-
-            //safeDetector.release();
-
-
-            ////////////////////////////////
-
-/*
-            int mWidth = theBitmap.getWidth();
-            int mHeight = theBitmap.getHeight();
-
-            int[] mIntArray = new int[mWidth * mHeight];
-
-            // Copy pixel data from the Bitmap into the 'intArray' array
-            theBitmap.getPixels(mIntArray, 0, mWidth, 0, 0, mWidth, mHeight);
-
-            byte [] yuv = new byte[mWidth*mHeight*3/2];
-
-            // Call to encoding function : convert intArray to Yuv Binary data
-            //encodeYUV420SP(yuv, mIntArray, mWidth, mHeight);
-*/
-        };
-
-        Log.d("ddddd","test");
+        myPaint = new Paint();
+        myPaint.setColor(Color.RED);
+        myPaint.setStyle(Paint.Style.STROKE);
+        myPaint.setStrokeWidth(5);
 
         initializeSurfaceViews();
 
@@ -125,42 +175,241 @@ public class MediaStreamActivity extends AppCompatActivity implements VideoRende
         initializePeerConnections();
 
         startStreamingVideo();
+
+
     }
 
-    public void encodeYUV420SP(byte[] yuv420sp, int[] argb, int width, int height) {
-        final int frameSize = width * height;
+    //안드로이드 FaceDetector 사용
 
-        int yIndex = 0;
-        int uvIndex = frameSize;
+//    Bitmap mBitmap;
+//    FaceDetector.Face[] mFace;
+//    FaceDetector mFaceDetector;
+//
+//    int mMaxFace = 5;
+//    int mFaceCount;
+//    float mEyeDistance;
+//
+//    public void detectFace(Bitmap bitmap) {
+//        //int i = 0;
+//        mBitmap = bitmap;
+//        // 최대 얼굴 인식 데이터 저장소 생성
+//        mFace = new FaceDetector.Face[mMaxFace];
+//        // 얼굴 인식 클래스 생성
+//        mFaceDetector = new FaceDetector( bitmap.getWidth(), bitmap.getHeight(), mFace.length);
+//        // bitmap 에서 인식된 얼굴 갯수를 mFaceCount에 반환
+//        // mFace에 인식된 얼굴 데이터를 저장
+//        mFaceCount = mFaceDetector.findFaces(bitmap, mFace);
+//        Log.d("facecnt", Integer.toString(mFaceCount));
+//
+//        if(mFaceCount == 1)
+//            Toast.makeText(this, "얼굴 인식", Toast.LENGTH_SHORT).show();
+//
+//        Paint myPaint = new Paint();
+//        myPaint.setColor(Color.RED);
+//        myPaint.setStyle(Paint.Style.STROKE);
+//        myPaint.setStrokeWidth(5);
+//        Canvas canvas = new Canvas(bitmap);
+//
+//        for(int i=0; i < mFaceCount; i++) {
+//            FaceDetector.Face face = mFace[i];
+//            PointF myMidPoint = new PointF();
+//            face.getMidPoint(myMidPoint);
+//            mEyeDistance = face.eyesDistance();
+//            canvas.drawRect(
+//                    (int)(myMidPoint.x - mEyeDistance),
+//                    (int)(myMidPoint.y - mEyeDistance),
+//                    (int)(myMidPoint.x + mEyeDistance),
+//                    (int)(myMidPoint.y + mEyeDistance),
+//                    myPaint);
+//        }
+//    }
 
-        int a, R, G, B, Y, U, V;
-        int index = 0;
-        for (int j = 0; j < height; j++) {
-            for (int i = 0; i < width; i++) {
+    //opencv로 얼굴 인식
+//    public void detectFace(Bitmap bitmap) {
+//
+//        matInput = new Mat (bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8U, new Scalar(4));
+//
+//        Utils.bitmapToMat(bitmap, matInput);
+//
+//        if ( matResult == null )
+//            matResult = new Mat(matInput.rows(), matInput.cols(), matInput.type());
+//
+//        //Core.flip(matInput, matInput, 1);
+//
+//        detect(cascadeClassifier_face,cascadeClassifier_eye, matInput.getNativeObjAddr(),
+//                matResult.getNativeObjAddr());
+//
+//        Utils.matToBitmap(matResult, bitmap);
+//
+//        imageView.setImageBitmap(bitmap);
+//    }
 
-                a = (argb[index] & 0xff000000) >> 24; // a is not used obviously
-                R = (argb[index] & 0xff0000) >> 16;
-                G = (argb[index] & 0xff00) >> 8;
-                B = (argb[index] & 0xff) >> 0;
 
-                // well known RGB to YUV algorithm
-                Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16;
-                U = ( ( -38 * R -  74 * G + 112 * B + 128) >> 8) + 128;
-                V = ( ( 112 * R -  94 * G -  18 * B + 128) >> 8) + 128;
+    //ml kit 사용
+    public void detectFace(FirebaseVisionImage image) {
 
-                // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
-                //    meaning for every 4 Y pixels there are 1 V and 1 U.  Note the sampling is every other
-                //    pixel AND every other scanline.
-                yuv420sp[yIndex++] = (byte) ((Y < 0) ? 0 : ((Y > 255) ? 255 : Y));
-                if (j % 2 == 0 && index % 2 == 0) {
-                    yuv420sp[uvIndex++] = (byte)((V<0) ? 0 : ((V > 255) ? 255 : V));
-                    yuv420sp[uvIndex++] = (byte)((U<0) ? 0 : ((U > 255) ? 255 : U));
+        Log.d("detectFace", "얼굴 인식 메소드 진입");
+        // [START set_detector_options]
+
+        //얼굴 인식 옵션
+        FirebaseVisionFaceDetectorOptions options =
+                new FirebaseVisionFaceDetectorOptions.Builder()
+                        .setClassificationMode(FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS)
+                        .enableTracking()
+                        //.setLandmarkMode(FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS)
+                        .build();
+        // [END set_detector_options]
+
+        // [START get_detector]
+
+        //detector 생성
+        FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
+                .getVisionFaceDetector(options);
+        // [END get_detector]
+
+
+        //얼굴 인식 시작
+        Task<List<FirebaseVisionFace>> result =
+            detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionFace>>() {
+
+                //성공 했을 때
+                @Override
+                public void onSuccess(List<FirebaseVisionFace> faces) {
+
+                    //imageView.setImageBitmap(bitmap);
+                    Log.d("onSuccess", "얼굴 인식 처리");
+
+                    for (FirebaseVisionFace face : faces) {
+
+                        Rect bounds = face.getBoundingBox();
+                        r = bounds;
+
+                        //Toast.makeText(MediaStreamActivity.this, "b : " + bounds.bottom + ", t : " + bounds.top + ", l : " + bounds.left + ", r : " + bounds.right, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+    }
+
+    //remote view에서 인식
+    public void detectFace2(FirebaseVisionImage image) {
+
+        Log.d("detectFace", "얼굴 인식 메소드 진입");
+        // [START set_detector_options]
+
+        //얼굴 인식 옵션
+        FirebaseVisionFaceDetectorOptions options =
+                new FirebaseVisionFaceDetectorOptions.Builder()
+                        .setClassificationMode(FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS)
+                        .enableTracking()
+                        //.setLandmarkMode(FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS)
+                        .build();
+        // [END set_detector_options]
+
+        // [START get_detector]
+
+        //detector 생성
+        FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
+                .getVisionFaceDetector(options);
+        // [END get_detector]
+
+
+        //얼굴 인식 시작
+        Task<List<FirebaseVisionFace>> result =
+                detector.detectInImage(image).addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionFace>>() {
+
+                    //성공 했을 때
+                    @Override
+                    public void onSuccess(List<FirebaseVisionFace> faces) {
+
+                        //imageView.setImageBitmap(bitmap);
+                        Log.d("onSuccess", "얼굴 인식 처리");
+
+                        for (FirebaseVisionFace face : faces) {
+
+                            Rect bounds = face.getBoundingBox();
+                            r2 = bounds;
+
+                            //Toast.makeText(MediaStreamActivity.this, "b : " + bounds.bottom + ", t : " + bounds.top + ", l : " + bounds.left + ", r : " + bounds.right, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
+    }
+
+    //bitmap 말고 bytebuffer 이용
+    private void imageFromBuffer(ByteBuffer buffer, int rotation) {
+        // [START set_metadata]
+        FirebaseVisionImageMetadata metadata = new FirebaseVisionImageMetadata.Builder()
+                .setWidth(480)   // 480x360 is typically sufficient for
+                .setHeight(360)  // image recognition
+                .setFormat(FirebaseVisionImageMetadata.IMAGE_FORMAT_NV21)
+                .setRotation(rotation)
+                .build();
+        // [END set_metadata]
+        // [START image_from_buffer]
+        FirebaseVisionImage image = FirebaseVisionImage.fromByteBuffer(buffer, metadata);
+
+        //detectFace(image);
+        // [END image_from_buffer]
+    }
+
+    //카메라 id값 얻기
+    private String getFrontFacingCameraId(CameraManager cManager) {
+        try {
+            String cameraId;
+            int cameraOrientation;
+            CameraCharacteristics characteristics;
+            for (int i = 0; i < cManager.getCameraIdList().length; i++) {
+                cameraId = cManager.getCameraIdList()[i];
+                characteristics = cManager.getCameraCharacteristics(cameraId);
+                cameraOrientation = characteristics.get(CameraCharacteristics.LENS_FACING);
+                if (cameraOrientation == CameraCharacteristics.LENS_FACING_FRONT) {
+                    return cameraId;
                 }
 
-                index ++;
             }
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public synchronized void onResume() {
+        super.onResume();
+        Log.d("onResume", "onResume");
+        handlerThread = new HandlerThread("inference");
+        handlerThread.start();
+        handler = new Handler(handlerThread.getLooper());
+
+        handlerThread2 = new HandlerThread("inference2");
+        handlerThread2.start();
+        handler2 = new Handler(handlerThread2.getLooper());
+    }
+
+    protected synchronized void runInBackground(final Runnable r) {
+        Log.d("runInBackground", "runInBackground");
+        if (handler != null) {
+            handler.post(r);
         }
     }
+
+    protected synchronized void runInBackground2(final Runnable r) {
+        Log.d("runInBackground2", "runInBackground2");
+        if (handler2 != null) {
+            handler2.post(r);
+        }
+    }
+
 
     private void initializeSurfaceViews() {
         rootEglBase = EglBase.create();
@@ -172,9 +421,155 @@ public class MediaStreamActivity extends AppCompatActivity implements VideoRende
         binding.surfaceView2.setEnableHardwareScaler(true);
         binding.surfaceView2.setMirror(true);
 
-        //binding.surfaceView3.init(rootEglBase.getEglBaseContext(), null);
-        //binding.surfaceView3.setEnableHardwareScaler(true);
-        //binding.surfaceView3.setMirror(true);
+
+
+        //bytebuffer 사용 시, 카메라 rotation 계산
+
+//        VisionImage visionImage = new VisionImage();
+//        int rotation = -1;
+//        CameraManager manager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
+//        try {
+//            rotation = visionImage.getRotationCompensation(getFrontFacingCameraId(manager), this, getApplicationContext());
+//        } catch (CameraAccessException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//        int finalRotation = rotation;
+
+        //surfaceView에서 프레임 추가될 때마다, bitmap or bytebuffer 가져오기
+        binding.surfaceView.addFrameListener(new EglRenderer.FrameListener() {
+            @Override
+            public void onFrame(Bitmap bitmap) {
+                Log.d("addFrameListener", "프레임 추가");
+
+                //bytebuffer 사용 시
+                //imageFromBuffer(byteBuffer, finalRotation);
+
+                Bitmap dstBitmap;
+                if (bitmap.getWidth() >= bitmap.getHeight()) {
+                    dstBitmap = Bitmap.createBitmap(bitmap, bitmap.getWidth()/2 - bitmap.getHeight()/2, 0,
+                            bitmap.getHeight(), bitmap.getHeight()
+                    );
+
+                    Log.d("resize", dstBitmap.getWidth() + ", " + dstBitmap.getHeight());
+
+                } else {
+                    dstBitmap = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight()/2 - bitmap.getWidth()/2,
+                            bitmap.getWidth(), bitmap.getWidth()
+                    );
+                    Log.d("resize", dstBitmap.getWidth() + ", " + dstBitmap.getHeight());
+                }
+
+                runInBackground(() -> {
+
+                    Log.d("runInBackground", "addFrameListener -> runInBackground");
+                    FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(dstBitmap);
+                    detectFace(image);
+
+//                    Paint myPaint = new Paint();
+//                    myPaint.setColor(Color.RED);
+//                    myPaint.setStyle(Paint.Style.STROKE);
+//                    myPaint.setStrokeWidth(5);
+
+
+                    MediaStreamActivity.this.runOnUiThread(new Runnable() {
+
+                        public void run() {
+
+                            mbitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
+
+                            canvas = new Canvas(mbitmap);
+                            canvas.drawColor(Color.TRANSPARENT);
+                            //imageView.setImageBitmap(dstBitmap);
+                            imageView.setImageBitmap(mbitmap);
+                            Log.d("runOnUiThread", "runOnUiThread -> setImageBitmap");
+
+                            try {
+                                Log.d("faceRect", "l : "+ r.left + ", t : " + r.top + ", r : " + r.right + ", b : " + r.bottom);
+
+                                float x = 1280 / 72;
+                                float y = 720/ 72;
+                                canvas.drawRect(r.left * x, r.top * y, r.right * x, r.bottom * y, myPaint);
+                                //사각형 초기화
+                                r = null;
+                                //canvas.drawRect(50, 100, 150, 200, myPaint);
+                                //binding.surfaceView.drawRect(r.left, r.top, r.right, r.bottom);
+                            }catch (Exception e){
+
+                            }
+                            //canvas.drawColor(Color.TRANSPARENT);
+
+                        }
+
+                    });
+
+                });
+
+            }
+        },0.1f);
+
+        /*
+        binding.surfaceView2.addFrameListener(new EglRenderer.FrameListener() {
+            @Override
+            public void onFrame(Bitmap bitmap) {
+                Log.d("addFrameListener", "프레임 추가");
+
+                Bitmap dstBitmap;
+                if (bitmap.getWidth() >= bitmap.getHeight()) {
+                    dstBitmap = Bitmap.createBitmap(bitmap, bitmap.getWidth()/2 - bitmap.getHeight()/2, 0,
+                            bitmap.getHeight(), bitmap.getHeight()
+                    );
+
+                    Log.d("resize2", dstBitmap.getWidth() + ", " + dstBitmap.getHeight());
+
+                } else {
+                    dstBitmap = Bitmap.createBitmap(bitmap, 0, bitmap.getHeight()/2 - bitmap.getWidth()/2,
+                            bitmap.getWidth(), bitmap.getWidth()
+                    );
+                    Log.d("resize2", dstBitmap.getWidth() + ", " + dstBitmap.getHeight());
+                }
+
+                runInBackground2(() -> {
+
+                    Log.d("runInBackground", "addFrameListener -> runInBackground");
+                    FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(dstBitmap);
+                    detectFace2(image);
+
+                    MediaStreamActivity.this.runOnUiThread(new Runnable() {
+
+                        public void run() {
+
+                            mbitmap2 = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888);
+
+                            canvas2 = new Canvas(mbitmap2);
+                            canvas2.drawColor(Color.TRANSPARENT);
+
+                            imageView2.setImageBitmap(mbitmap2);
+                            Log.d("runOnUiThread", "runOnUiThread -> setImageBitmap");
+
+                            try {
+                                Log.d("faceRect", "l : "+ r2.left + ", t : " + r2.top + ", r : " + r2.right + ", b : " + r2.bottom);
+
+                                float x = 1280 / 72;
+                                float y = 720/ 72;
+                                canvas2.drawRect(r2.left * x, r2.top * y, r2.right * x, r2.bottom * y, myPaint);
+                                //사각형 초기화
+                                r2 = null;
+
+                            }catch (Exception e){
+
+                            }
+
+                        }
+
+                    });
+
+                });
+
+            }
+        },0.1f);
+*/
     }
 
     private void initializePeerConnectionFactory() {
@@ -188,56 +583,9 @@ public class MediaStreamActivity extends AppCompatActivity implements VideoRende
         VideoSource videoSource = factory.createVideoSource(videoCapturer);
         videoCapturer.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS);
 
-        //VideoRenderer v = new VideoRenderer(binding.surfaceView);
-
-        //SurfaceViewRenderer surfaceViewRenderer = new SurfaceViewRenderer(getApplicationContext());
-
-
         videoTrackFromCamera = factory.createVideoTrack(VIDEO_TRACK_ID, videoSource);
         videoTrackFromCamera.setEnabled(true);
         videoTrackFromCamera.addRenderer(new VideoRenderer(binding.surfaceView));
-
-        boolean enable = videoTrackFromCamera.enabled();
-        String id = videoTrackFromCamera.id();
-        String kind = videoTrackFromCamera.kind();
-        String state = videoTrackFromCamera.state().toString();
-
-        Log.d("enabled()",Boolean.toString(videoTrackFromCamera.enabled()));
-        Log.d("id()",videoTrackFromCamera.id());
-        Log.d("kind()",videoTrackFromCamera.kind());
-        Log.d("state()", videoTrackFromCamera.state().toString());
-
-        //VideoRenderer.Callbacks
-        //VideoRenderer v = new VideoRenderer();
-
-        //VideoTrack videoTrack =
-        //renderFrame(new VideoRenderer.I420Frame());
-
-        //YuvFrame yuvFrame = new YuvFrame(VideoRenderer.I420Frame, PROCESSING_NONE, 0);
-
-        //VideoRenderer videoRenderer;
-
-        //VideoFileRenderer
-/*
-        VideoRenderer.I420Frame i420Frame;
-
-
-        int width = VIDEO_RESOLUTION_WIDTH;
-        int height = VIDEO_RESOLUTION_HEIGHT;
-        int stride_y = 16 + ((width-1)/16)*16;
-        int stride_uv = 16 + ((stride_y/2-1)/16)*16;
-        ByteBuffer[] byteBuffers = {};
-
-        byteBuffers[0] = ByteBuffer.allocate(3);
-        byteBuffers[1] = ByteBuffer.allocate(3);
-        byteBuffers[2] = ByteBuffer.allocate(3);
-*/
-
-
-
-        //renderFrame(new VideoRenderer.I420Frame(0,0,0,));
-
-        //renderFrame(new VideoRenderer.I420Frame(width, height, 0, new int[]{stride_y, stride_uv, stride_uv}, byteBuffers, 0));
     }
 
     private void initializePeerConnections() {
@@ -247,35 +595,7 @@ public class MediaStreamActivity extends AppCompatActivity implements VideoRende
 
     private void startStreamingVideo() {
         MediaStream mediaStream = factory.createLocalMediaStream("ARDAMS");
-        //new MediaStream(nativeCreateLocalMediaStream(this.nativeFactory, label));
-        //this.nativeFactory = nativeCreatePeerConnectionFactory(options);
-
-        /*
-
-
-    public MediaStream(long nativeStream) {
-        this.nativeStream = nativeStream;
-    }
-         */
-
-        //mediaStream.videoTracks.
-
         mediaStream.addTrack(videoTrackFromCamera);
-
-        //EasyrtcSingleFrameCapturer.BitmapListener gotFrameListener = new EasyrtcSingleFrameCapturer.BitmapListener() {
-
-/*
-        MediaStream stream = contextManager.getStream();
-        EasyrtcSingleFrameCapturer.toBitmap(this, stream, gotFrameListener);
-*/
-
-        int i = mediaStream.videoTracks.size();
-
-
-        EasyrtcSingleFrameCapturer.toBitmap(this, mediaStream, gotFrameListener);
-
-
-
 
         localPeerConnection.addStream(mediaStream);
 
@@ -410,200 +730,41 @@ public class MediaStreamActivity extends AppCompatActivity implements VideoRende
     }
 
     /*
-    * Read more about Camera2 here
-    * https://developer.android.com/reference/android/hardware/camera2/package-summary.html
-    * */
+     * Read more about Camera2 here
+     * https://developer.android.com/reference/android/hardware/camera2/package-summary.html
+     * */
 
     private boolean useCamera2() {
 
         return Camera2Enumerator.isSupported(this);
-        //return false;
-    }
-
-    ////////////
-
-
-    ////////////
-    @Override
-    public void renderFrame(final VideoRenderer.I420Frame i420Frame) {
-        YuvImage yuvImage = i420ToYuvImage(i420Frame.yuvPlanes, i420Frame.yuvStrides, i420Frame.width, i420Frame.height);
-
-        // Set image data (YUV N21 format) -- NOT working. The commented bitmap line works.
-        //Frame frame = new Frame.Builder().setImageData(ByteBuffer.wrap(yuvImage.getYuvData()), yuvImage.getWidth(), yuvImage.getHeight(), yuvImage.getYuvFormat()).build();
-        //Frame frame = new Frame.Builder().setBitmap(yuvImage).build();
-        Context context = getApplicationContext();
-        FaceDetector detector = new FaceDetector.Builder(context)
-                .setTrackingEnabled(true)
-                //.setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
-                .build();
-
-
-        Frame frame = new Frame.Builder().setImageData(ByteBuffer.wrap(yuvImage.getYuvData()), yuvImage.getWidth(), yuvImage.getHeight(), yuvImage.getYuvFormat()).setRotation(Frame.ROTATION_270).build();
-
-        // Detect faces
-        SparseArray<Face> faces = detector.detect(frame);
-
-        if (!detector.isOperational()) {
-            Log.e(TAG, "Detector is not operational!");
-        }
-
-        if (faces.size() > 0) {
-            Log.i("yuv", "Smiling %: " + faces.valueAt(0).getIsSmilingProbability());
-        }
-
-        detector.release();
-        Log.i("yuv", "Faces detected: " + faces.size());
-    }
-
-    private YuvImage i420ToYuvImage(ByteBuffer[] yuvPlanes, int[] yuvStrides, int width, int height) {
-        if (yuvStrides[0] != width) {
-            return fastI420ToYuvImage(yuvPlanes, yuvStrides, width, height);
-        }
-        if (yuvStrides[1] != width / 2) {
-            return fastI420ToYuvImage(yuvPlanes, yuvStrides, width, height);
-        }
-        if (yuvStrides[2] != width / 2) {
-            return fastI420ToYuvImage(yuvPlanes, yuvStrides, width, height);
-        }
-
-        byte[] bytes = new byte[yuvStrides[0] * height +
-                yuvStrides[1] * height / 2 +
-                yuvStrides[2] * height / 2];
-        ByteBuffer tmp = ByteBuffer.wrap(bytes, 0, width * height);
-        copyPlane(yuvPlanes[0], tmp);
-
-        byte[] tmpBytes = new byte[width / 2 * height / 2];
-        tmp = ByteBuffer.wrap(tmpBytes, 0, width / 2 * height / 2);
-
-        copyPlane(yuvPlanes[2], tmp);
-        for (int row = 0 ; row < height / 2 ; row++) {
-            for (int col = 0 ; col < width / 2 ; col++) {
-                bytes[width * height + row * width + col * 2]
-                        = tmpBytes[row * width / 2 + col];
-            }
-        }
-        copyPlane(yuvPlanes[1], tmp);
-        for (int row = 0 ; row < height / 2 ; row++) {
-            for (int col = 0 ; col < width / 2 ; col++) {
-                bytes[width * height + row * width + col * 2 + 1] =
-                        tmpBytes[row * width / 2 + col];
-            }
-        }
-        return new YuvImage(bytes, NV21, width, height, null);
-    }
-
-    private YuvImage fastI420ToYuvImage(ByteBuffer[] yuvPlanes,
-                                        int[] yuvStrides,
-                                        int width,
-                                        int height) {
-        byte[] bytes = new byte[width * height * 3 / 2];
-        int i = 0;
-        for (int row = 0 ; row < height ; row++) {
-            for (int col = 0 ; col < width ; col++) {
-                bytes[i++] = yuvPlanes[0].get(col + row * yuvStrides[0]);
-            }
-        }
-        for (int row = 0 ; row < height / 2 ; row++) {
-            for (int col = 0 ; col < width / 2; col++) {
-                bytes[i++] = yuvPlanes[2].get(col + row * yuvStrides[2]);
-                bytes[i++] = yuvPlanes[1].get(col + row * yuvStrides[1]);
-            }
-        }
-        return new YuvImage(bytes, NV21, width, height, null);
-    }
-
-    private void copyPlane(ByteBuffer src, ByteBuffer dst) {
-        src.position(0).limit(src.capacity());
-        dst.put(src);
-        dst.position(0).limit(dst.capacity());
     }
 
 
-    // Copy the bytes out of |src| and into |dst|, ignoring and overwriting
-// positon & limit in both buffers.
-//** copied from org/webrtc/VideoRenderer.java **//
+    class BitmapWorkerTask extends AsyncTask<Integer, Void, Bitmap> {
+        private final WeakReference<ImageView> imageViewReference;
+        private int data = 0;
 
-    /*
-    private static void copyPlane(ByteBuffer src, ByteBuffer dst) {
-        src.position(0).limit(src.capacity());
-        dst.put(src);
-        dst.position(0).limit(dst.capacity());
-    }
+        public BitmapWorkerTask(ImageView imageView) {
+            // Use a WeakReference to ensure the ImageView can be garbage collected
+            imageViewReference = new WeakReference<ImageView>(imageView);
+        }
 
-    public static android.graphics.YuvImage ConvertTo(org.webrtc.VideoRenderer.I420Frame src, int imageFormat) {
-        switch (imageFormat) {
-            default:
-                return null;
+        // Decode image in background.
+        @Override
+        protected Bitmap doInBackground(Integer... params) {
+            data = params[0];
+            return null;// decodeSampledBitmapFromResource(getResources(), data, 100, 100));
+        }
 
-            case android.graphics.ImageFormat.YV12: {
-                byte[] bytes = new byte[src.yuvStrides[0]*src.height +
-                        src.yuvStrides[1]*src.height/2 +
-                        src.yuvStrides[2]*src.height/2];
-                ByteBuffer tmp = ByteBuffer.wrap(bytes, 0, src.yuvStrides[0]*src.height);
-                copyPlane(src.yuvPlanes[0], tmp);
-                tmp = ByteBuffer.wrap(bytes, src.yuvStrides[0]*src.height, src.yuvStrides[2]*src.height/2);
-                copyPlane(src.yuvPlanes[2], tmp);
-                tmp = ByteBuffer.wrap(bytes, src.yuvStrides[0]*src.height+src.yuvStrides[2]*src.height/2, src.yuvStrides[1]*src.height/2);
-                copyPlane(src.yuvPlanes[1], tmp);
-                int[] strides = src.yuvStrides.clone();
-                return new YuvImage(bytes, imageFormat, src.width, src.height, strides);
-            }
-
-            case NV21: {
-                if (src.yuvStrides[0] != src.width)
-                    return convertLineByLine(src);
-                if (src.yuvStrides[1] != src.width/2)
-                    return convertLineByLine(src);
-                if (src.yuvStrides[2] != src.width/2)
-                    return convertLineByLine(src);
-
-                byte[] bytes = new byte[src.yuvStrides[0]*src.height +
-                        src.yuvStrides[1]*src.height/2 +
-                        src.yuvStrides[2]*src.height/2];
-                ByteBuffer tmp = ByteBuffer.wrap(bytes, 0, src.width*src.height);
-                copyPlane(src.yuvPlanes[0], tmp);
-
-                byte[] tmparray = new byte[src.width/2*src.height/2];
-                tmp = ByteBuffer.wrap(tmparray, 0, src.width/2*src.height/2);
-
-                copyPlane(src.yuvPlanes[2], tmp);
-                for (int row=0; row<src.height/2; row++) {
-                    for (int col=0; col<src.width/2; col++) {
-                        bytes[src.width*src.height + row*src.width + col*2] = tmparray[row*src.width/2 + col];
-                    }
+        // Once complete, see if ImageView is still around and set bitmap.
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (imageViewReference != null && bitmap != null) {
+                final ImageView imageView = imageViewReference.get();
+                if (imageView != null) {
+                    imageView.setImageBitmap(bitmap);
                 }
-                copyPlane(src.yuvPlanes[1], tmp);
-                for (int row=0; row<src.height/2; row++) {
-                    for (int col=0; col<src.width/2; col++) {
-                        bytes[src.width*src.height + row*src.width + col*2+1] = tmparray[row*src.width/2 + col];
-                    }
-                }
-                return new YuvImage(bytes, imageFormat, src.width, src.height, null);
             }
         }
     }
-
-    public static android.graphics.YuvImage convertLineByLine(org.webrtc.VideoRenderer.I420Frame src) {
-        byte[] bytes = new byte[src.width*src.height*3/2];
-        int i=0;
-        for (int row=0; row<src.height; row++) {
-            for (int col=0; col<src.width; col++) {
-                bytes[i++] = src.yuvPlanes[0][col+row*src.yuvStrides[0]];
-
-            }
-        }
-        for (int row=0; row<src.height/2; row++) {
-            for (int col=0; col<src.width/2; col++) {
-                bytes[i++] = src.yuvPlanes[2][col+row*src.yuvStrides[2]];
-                bytes[i++] = src.yuvPlanes[1][col+row*src.yuvStrides[1]];
-            }
-        }
-        return new YuvImage(bytes, NV21, src.width, src.height, null);
-
-    }
-}
-*/
-
-
 }
