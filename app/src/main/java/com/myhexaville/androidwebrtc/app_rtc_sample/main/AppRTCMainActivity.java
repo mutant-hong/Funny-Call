@@ -34,6 +34,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Random;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -57,6 +58,8 @@ public class AppRTCMainActivity extends AppCompatActivity {
     String myId;
 
     String caller;
+
+    String roomID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,12 +88,16 @@ public class AppRTCMainActivity extends AppCompatActivity {
         String friendId = intent.getStringExtra("friendId");
         caller = intent.getStringExtra("caller");
 
+        //상대방에게 왔을때
+        if(caller.equals("false"))
+            roomID = intent.getStringExtra("roomId");
+
         binding.roomEdittext.setText(friendId);
 
         pref = getSharedPreferences("login", 0);
         myId = pref.getString("id","");
 
-        //팝업창 yes or no 로 선택하게
+        //내가 걸었을 때
         if(!caller.equals("true"))
             binding.connectButton.performClick();
 
@@ -127,14 +134,25 @@ public class AppRTCMainActivity extends AppCompatActivity {
         String[] perms = {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 
         Log.d("apprtc", "1");
+
+
         if (EasyPermissions.hasPermissions(this, perms)) {
             Log.d("apprtc", "2");
             //내가 걸었을때
-            if(caller.equals("true"))
-                connectToRoom(myId+"3"+binding.roomEdittext.getText().toString());
+            if(caller.equals("true")){
+                //방 번호 생성
+                Random random = new Random();
+                String roomId = Integer.toString(random.nextInt(900000000) + 100000000);
+                connectToRoom(roomId);
+                //connectToRoom("11" + myId+""+binding.roomEdittext.getText().toString());
+            }
+
             //상대방에게 왔을때
-            else
-                connectToRoom(binding.roomEdittext.getText().toString()+"3"+myId);
+            else{
+                connectToRoom(roomID);
+                //connectToRoom("11" + binding.roomEdittext.getText().toString()+""+myId);
+            }
+
         } else {
             EasyPermissions.requestPermissions(this, "Need some permissions", RC_CALL, perms);
         }
@@ -148,7 +166,7 @@ public class AppRTCMainActivity extends AppCompatActivity {
         if(caller.equals("true")){
             //상대방에게 알림
             callNoti task = new callNoti();
-            task.execute("http://" + IP_ADDRESS + "/faceToface/callNoti.php", myId, binding.roomEdittext.getText().toString());
+            task.execute("http://" + IP_ADDRESS + "/faceToface/callNoti.php", myId, binding.roomEdittext.getText().toString(), roomId);
 
             //결과 받고 activity finish();
         }
@@ -189,9 +207,10 @@ public class AppRTCMainActivity extends AppCompatActivity {
 
             String myId = (String)params[1];
             String friendId = (String)params[2];
+            String roomId = (String)params[3];
 
             String serverURL = (String)params[0];
-            String postParameters = "myId=" + myId + "&friendId=" + friendId;
+            String postParameters = "myId=" + myId + "&friendId=" + friendId + "&roomId=" + roomId;
 
 
             try {

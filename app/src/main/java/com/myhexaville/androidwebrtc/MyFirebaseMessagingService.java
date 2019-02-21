@@ -51,6 +51,7 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
     private void sendCallingActivity(String title, String messageBody){
         Intent intent = new Intent(this, CallingActivity.class);
         intent.putExtra("friendId", title);
+        intent.putExtra("roomId", messageBody);
         intent.putExtra("caller", "false");
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

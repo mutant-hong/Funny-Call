@@ -126,6 +126,9 @@ public class CallActivity extends AppCompatActivity
     Paint myPaint, myPaint2;
     FirebaseVisionPoint noisePos;
 
+    //상대방 얼굴 인식 좌표
+    float noiseX;
+    float noiseY;
 
     SharedPreferences pref;
     String myId;
@@ -139,7 +142,7 @@ public class CallActivity extends AppCompatActivity
     boolean isRunning=false;
 
     boolean local = false;
-    boolean remote = false;
+    boolean init = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -184,12 +187,38 @@ public class CallActivity extends AppCompatActivity
                 //인식 시작
                 if(!local){
                     local = true;
-                    binding.faceBtn.setText("o");
+                    binding.faceBtn.setText("x");
+
+
+//
+//                    //상대방 화면 초기화
+//                    mbitmap2 = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+//
+//                    canvas = new Canvas(mbitmap2);
+//                    canvas.drawColor(Color.TRANSPARENT);
+//
+//                    binding.remoteVideoImage.setImageBitmap(mbitmap2);
                 }
                 //인식 그만
                 else{
                     local = false;
-                    binding.faceBtn.setText("x");
+                    binding.faceBtn.setText("ㅇ");
+
+                    //내 화면 초기화
+                    mbitmap = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+
+                    canvas = new Canvas(mbitmap);
+                    canvas.drawColor(Color.TRANSPARENT);
+
+                    binding.localVideoImage.setImageBitmap(mbitmap);
+
+                    //상대방에게 인식 그만 보내기
+                    String msg= "null";
+                    // 송신 스레드 가동
+                    SendToServerThread thread=new SendToServerThread(member_socket,msg);
+                    thread.start();
+
+                    noisePos = null;
                 }
             }
         });
@@ -202,6 +231,7 @@ public class CallActivity extends AppCompatActivity
             }
         },0.05f);
 
+        //상대방 얼굴인식은 서버에서 좌표 받아서 처리하기
 //        binding.remoteVideoView.addFrameListener(bitmap -> {
 //            Log.d("remoteVideoView", "프레임추가");
 //            detectRemoteFace(bitmap);
@@ -311,37 +341,43 @@ public class CallActivity extends AppCompatActivity
                             }
                             //일치하지 않으면 좌표값 받아서 canvas
                             else{
-                                //tv.setBackgroundResource(R.drawable.you);
-                                //tv.setBackgroundColor(Color.rgb(255,0,0));
-
                                 //그리는 동작
-                                Toast.makeText(CallActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(CallActivity.this, msg, Toast.LENGTH_SHORT).show();
                                 Log.d("MessageThread", msg);
 
+                                String[] s = new String[3];
                                 String[] split = msg.split(" : ");
                                 // 1, 2 index 사용
 
                                 Log.d("length", split.length + "");
 
+                                mbitmap2 = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+
+                                canvas = new Canvas(mbitmap2);
+                                canvas.drawColor(Color.TRANSPARENT);
+
+                                binding.remoteVideoImage.setImageBitmap(mbitmap2);
+
                                 if(split.length == 3){
-                                    float noiseX = Float.parseFloat(split[1]);
-                                    float noiseY = Float.parseFloat(split[2]);
+                                    noiseX = Float.parseFloat(split[1]);
+                                    noiseY = Float.parseFloat(split[2]);
 
                                     CallActivity.this.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
 
                                             try {
-                                                mbitmap = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+                                                mbitmap2 = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
 
-                                                canvas = new Canvas(mbitmap);
+                                                canvas = new Canvas(mbitmap2);
                                                 canvas.drawColor(Color.TRANSPARENT);
 
-                                                binding.remoteVideoImage.setImageBitmap(mbitmap);
+                                                binding.remoteVideoImage.setImageBitmap(mbitmap2);
 
                                                 float x = 1440 / 36;
                                                 float y = 2560 / 36;
-                                                //canvas.drawRect(r.left * x, (r.top + 3) * y, r.right * x, (r.bottom - 3) * y, myPaint);
+
+                                                Log.d("faceXY", noiseX + ", " + noiseY);
                                                 canvas.drawArc((noiseX - 2)*x, (noiseY - 1)*y,
                                                         (noiseX + 2)*x, (noiseY + 1)*y, 0, 360, true, myPaint);
 
@@ -358,16 +394,21 @@ public class CallActivity extends AppCompatActivity
                                                 canvas.drawLine(rightBotX, (leftTopY + rightBotY) / 2, rightBotX + 300, (leftTopY + rightBotY) / 2, myPaint2);
                                                 canvas.drawLine(rightBotX, rightBotY, rightBotX + 300, rightBotY + 100, myPaint2);
 
+                                                //초기화
+                                                noiseX = 0;
+                                                noiseY = 0;
+                                                //split[1] = null;
+                                                //split[2] = null;
+
+                                                Log.d("faceXY2", noiseX + ", " + noiseY);
+                                                //Log.d("split", split[1] + ", " + split[2]);
+
                                             }catch (Exception e){
 
                                             }
-
-
-
                                         }
                                     });
                                 }
-
                             }
                         }
                     });
@@ -400,7 +441,11 @@ public class CallActivity extends AppCompatActivity
         public void run() {
             try{
                 // 서버로 데이터를 보낸다.
-                dos.writeUTF(msg);
+                if(!local)
+                    dos.writeUTF("null");
+                else
+                    dos.writeUTF(msg);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -492,12 +537,6 @@ public class CallActivity extends AppCompatActivity
             FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(dstBitmap);
             detectFace(image);
 
-//                    Paint myPaint = new Paint();
-//                    myPaint.setColor(Color.RED);
-//                    myPaint.setStyle(Paint.Style.STROKE);
-//                    myPaint.setStrokeWidth(5);
-
-
             CallActivity.this.runOnUiThread(new Runnable() {
 
                 public void run() {
@@ -525,7 +564,11 @@ public class CallActivity extends AppCompatActivity
                         }
                         float x = 1440 / 36;
                         float y = 2560 / 36;
+
+                        //얼굴 사각형
                         //canvas.drawRect(r.left * x, (r.top + 3) * y, r.right * x, (r.bottom - 3) * y, myPaint);
+
+                        // 고양이 코
                         canvas.drawArc((noisePos.getX() - 2)*x, (noisePos.getY() - 1)*y, (noisePos.getX() + 2)*x, (noisePos.getY() + 1)*y, 0, 360, true, myPaint);
 
                         float leftTopX = (noisePos.getX() - 5)*x;
@@ -533,6 +576,7 @@ public class CallActivity extends AppCompatActivity
                         float rightBotX = (noisePos.getX() + 5)*x;
                         float rightBotY = (noisePos.getY() + 1)*y;
 
+                        // 고양이 수염
                         canvas.drawLine(leftTopX, leftTopY, leftTopX - 300, leftTopY - 100, myPaint2);
                         canvas.drawLine(leftTopX, (leftTopY + rightBotY) / 2, leftTopX - 300, (leftTopY + rightBotY) / 2, myPaint2);
                         canvas.drawLine(leftTopX, rightBotY, leftTopX - 300, rightBotY + 100, myPaint2);
@@ -541,15 +585,19 @@ public class CallActivity extends AppCompatActivity
                         canvas.drawLine(rightBotX, (leftTopY + rightBotY) / 2, rightBotX + 300, (leftTopY + rightBotY) / 2, myPaint2);
                         canvas.drawLine(rightBotX, rightBotY, rightBotX + 300, rightBotY + 100, myPaint2);
 
-                        //사각형 초기화
+                        //초기화
                         noisePos = null;
                         r = null;
-                        //canvas.drawRect(50, 100, 150, 200, myPaint);
-                        //binding.surfaceView.drawRect(r.left, r.top, r.right, r.bottom);
                     }catch (Exception e){
 
                     }
-                    //canvas.drawColor(Color.TRANSPARENT);
+
+                    if(noisePos == null || binding.faceBtn.getText().equals("ㅇ")){
+                        String msg= "null";
+                        // 송신 스레드 가동
+                        SendToServerThread thread=new SendToServerThread(member_socket,msg);
+                        thread.start();
+                    }
 
                 }
 

@@ -14,7 +14,7 @@ public class CallingActivity extends AppCompatActivity {
     TextView friendName;
     ImageView call, disconnect;
 
-    String friendId, caller;
+    String friendId, caller, roomId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +29,7 @@ public class CallingActivity extends AppCompatActivity {
 
         friendId = intent.getStringExtra("friendId");
         caller = intent.getStringExtra("caller");
+        roomId = intent.getStringExtra("roomId");
 
         friendName.setText(friendId);
 
@@ -45,6 +46,7 @@ public class CallingActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), AppRTCMainActivity.class);
                 intent.putExtra("friendId", friendId);
                 intent.putExtra("caller", caller);
+                intent.putExtra("roomId", roomId);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 startActivity(intent);
