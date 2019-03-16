@@ -16,8 +16,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.myhexaville.androidwebrtc.tutorial.MediaStreamActivity;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,7 +46,7 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
     SwipeRefreshLayout swipeRefreshLayout;
 
     //opencv 테스트 버튼
-    Button opencv;
+    Button opencv, test;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +62,7 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
         userId = (TextView)findViewById(R.id.userId);
 
         //opencv 테스트 버튼
-        opencv = (Button)findViewById(R.id.opencv);
+        test = (Button)findViewById(R.id.test);
 
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -97,7 +95,7 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
         history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MediaStreamActivity.class);
+                Intent intent = new Intent(getApplicationContext(), UdpTest.class);
                 startActivity(intent);
                 //overridePendingTransition(0,0);
                 //finish();
@@ -115,11 +113,12 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
         });
 
         //opencv 테스트 버튼
-        opencv.setOnClickListener(new View.OnClickListener() {
+        test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), OpencvActivity.class);
+                Intent intent = new Intent(getApplicationContext(), RecordActivity.class);
                 startActivity(intent);
+                //finish();
             }
         });
     }

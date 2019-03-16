@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +41,7 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceLandmark;
+import com.myhexaville.androidwebrtc.AudioConnection;
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCAudioManager;
 import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient;
@@ -49,6 +51,7 @@ import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient
 import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.PeerConnectionClient.PeerConnectionParameters;
 import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.WebSocketRTCClient;
 import com.myhexaville.androidwebrtc.databinding.ActivityCallBinding;
+import com.smp.soundtouchandroid.SoundTouch;
 
 import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
@@ -100,7 +103,7 @@ public class CallActivity extends AppCompatActivity
     private PeerConnectionClient peerConnectionClient;
     private AppRTCClient appRtcClient;
     private SignalingParameters signalingParameters;
-    private AppRTCAudioManager audioManager;
+    //private AppRTCAudioManager audioManager;
     private EglBase rootEglBase;
     private final List<VideoRenderer.Callbacks> remoteRenderers = new ArrayList<>();
     private Toast logToast;
@@ -142,7 +145,14 @@ public class CallActivity extends AppCompatActivity
     boolean isRunning=false;
 
     boolean local = false;
-    boolean init = false;
+
+    /////////오디오 관련/////////
+    AudioConnection audioConnection;
+    SoundTouch soundTouch;
+
+    boolean funcOnOff = false;
+    boolean isMask = false;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -174,6 +184,115 @@ public class CallActivity extends AppCompatActivity
         myPaint2.setColor(Color.BLACK);
         myPaint2.setStrokeWidth(10);
 
+        /////오디오 관련
+        soundTouch = new SoundTouch(0, 2, 1, 2, 1, 1);
+        audioConnection = new AudioConnection(soundTouch);
+
+        binding.funcBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(funcOnOff){
+                    //마스크 & 음성 변조 기능 선택 활성화x
+                    binding.funcBtn.setBackgroundResource(R.drawable.function);
+                    binding.funcLayout.setVisibility(View.GONE);
+                    funcOnOff = false;
+                }
+                else{
+                    //마스크 & 음성 변조 기능 선택 활성화
+                    binding.funcBtn.setBackgroundResource(R.drawable.function_now);
+                    binding.funcLayout.setVisibility(View.VISIBLE);
+                    funcOnOff = true;
+                }
+            }
+        });
+
+        // 마스크 or 음성 변조 기능 선택하기
+
+        //마스크 기능 선택
+        binding.maskBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.maskBtn.setImageResource(R.drawable.mask_now);
+                binding.voiceBtn.setImageResource(R.drawable.voice);
+
+                binding.faceBtn.setVisibility(View.VISIBLE);
+
+                binding.pitchShow.setVisibility(View.GONE);
+                binding.pitchSeek.setVisibility(View.GONE);
+                binding.buttonResetPitch.setVisibility(View.GONE);
+            }
+        });
+
+        //음성 변조 기능 선택
+        binding.voiceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.maskBtn.setImageResource(R.drawable.mask);
+                binding.voiceBtn.setImageResource(R.drawable.voice_now);
+
+                binding.faceBtn.setVisibility(View.GONE);
+
+                binding.pitchShow.setVisibility(View.VISIBLE);
+                binding.pitchSeek.setVisibility(View.VISIBLE);
+                binding.buttonResetPitch.setVisibility(View.VISIBLE);
+            }
+        });
+
+        //톤 조정
+        binding.pitchSeek.setOnSeekBarChangeListener(onPitchSeekBarListener);
+
+//        binding.pitchSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                float pitch = (progress - 1000) / 100.0f;
+//                binding.pitchShow.setText("톤: " + pitch);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                float pitch = (seekBar.getProgress() - 1000) / 100.0f;
+//                soundTouch.setPitchSemi(pitch);
+//
+//                Log.d("pitch", ""+pitch);
+//            }
+//        });
+
+        //톤 초기화 버튼
+        binding.buttonResetPitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.pitchSeek.setProgress(1000);
+                onPitchSeekBarListener.onStartTrackingTouch(binding.pitchSeek);
+                onPitchSeekBarListener.onProgressChanged(binding.pitchSeek, 1000, false);
+                onPitchSeekBarListener.onStopTrackingTouch(binding.pitchSeek);
+            }
+        });
+
+//        binding.onoff.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(onoff) {
+//                    binding.onoff.setText("off");
+//                    //binding.test.setVisibility(View.GONE);
+//                    onoff = false;
+//
+//                    soundTouch.setPitchSemi(0);
+//                }
+//                else {
+//                    binding.onoff.setText("on");
+//                    //binding.test.setVisibility(View.VISIBLE);
+//                    onoff = true;
+//
+//                    soundTouch.setPitchSemi(10.0f);
+//                }
+//            }
+//        });
+
         pref = getSharedPreferences("login", 0);
         myId = pref.getString("id","");
 
@@ -187,7 +306,8 @@ public class CallActivity extends AppCompatActivity
                 //인식 시작
                 if(!local){
                     local = true;
-                    binding.faceBtn.setText("x");
+                    //binding.faceBtn.setText("x");
+                    binding.faceBtn.setBackgroundResource(R.drawable.face_now);
 
 
 //
@@ -202,7 +322,8 @@ public class CallActivity extends AppCompatActivity
                 //인식 그만
                 else{
                     local = false;
-                    binding.faceBtn.setText("ㅇ");
+                    //binding.faceBtn.setText("ㅇ");
+                    binding.faceBtn.setBackgroundResource(R.drawable.face);
 
                     //내 화면 초기화
                     mbitmap = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
@@ -266,9 +387,33 @@ public class CallActivity extends AppCompatActivity
         peerConnectionClient = PeerConnectionClient.getInstance();
         peerConnectionClient.createPeerConnectionFactory(this, peerConnectionParameters, this);
 
+        //webrtc 오디오 끄기
+        peerConnectionClient.setAudioEnabled(false);
+
         startCall();
     }
 
+    private SeekBar.OnSeekBarChangeListener onPitchSeekBarListener = new SeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            float pitch = (progress - 1000) / 100.0f;
+            binding.pitchShow.setText("톤: " + pitch);
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            float pitch = (seekBar.getProgress() - 1000) / 100.0f;
+            soundTouch.setPitchSemi(pitch);
+
+            Log.d("pitch", ""+pitch);
+        }
+    };
     // 서버접속 처리하는 스레드 클래스
     class ConnectionThread extends Thread {
 
@@ -345,7 +490,6 @@ public class CallActivity extends AppCompatActivity
                                 //Toast.makeText(CallActivity.this, msg, Toast.LENGTH_SHORT).show();
                                 Log.d("MessageThread", msg);
 
-                                String[] s = new String[3];
                                 String[] split = msg.split(" : ");
                                 // 1, 2 index 사용
 
@@ -592,7 +736,7 @@ public class CallActivity extends AppCompatActivity
 
                     }
 
-                    if(noisePos == null || binding.faceBtn.getText().equals("ㅇ")){
+                    if(noisePos == null){// || binding.faceBtn.getResources().equals(R.drawable.face_now)){
                         String msg= "null";
                         // 송신 스레드 가동
                         SendToServerThread thread=new SendToServerThread(member_socket,msg);
@@ -810,6 +954,10 @@ public class CallActivity extends AppCompatActivity
 //        mbitmap.recycle();
         mbitmap = null;
 
+        audioConnection.stopStreamingAudio();
+        audioConnection.receiver = false;
+        audioConnection.sender = false;
+
         super.onDestroy();
 
         try{
@@ -879,11 +1027,11 @@ public class CallActivity extends AppCompatActivity
 
         // Create and audio manager that will take care of audio routing,
         // audio modes, audio device enumeration etc.
-        audioManager = AppRTCAudioManager.create(this);
+//        audioManager = AppRTCAudioManager.create(this);
         // Store existing audio settings and change audio mode to
         // MODE_IN_COMMUNICATION for best possible VoIP performance.
         Log.d(LOG_TAG, "Starting the audio manager...");
-        audioManager.start(this::onAudioManagerDevicesChanged);
+//        audioManager.start(this::onAudioManagerDevicesChanged);
     }
 
     // Should be called from UI thread
@@ -922,10 +1070,10 @@ public class CallActivity extends AppCompatActivity
         }
         binding.localVideoView.release();
         binding.remoteVideoView.release();
-        if (audioManager != null) {
-            audioManager.stop();
-            audioManager = null;
-        }
+//        if (audioManager != null) {
+//            audioManager.stop();
+//            audioManager = null;
+//        }
         if (iceConnected && !isError) {
             setResult(RESULT_OK);
         } else {

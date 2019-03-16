@@ -71,6 +71,11 @@
         <activity android:name=".CallingActivity"
             android:configChanges="orientation|screenSize"/>
 
+        <activity android:name=".RecordActivity"/>
+        <activity android:name=".RecordTestActivity"/>
+        <activity android:name=".test"/>
+        <activity android:name=".UdpTest"/>
+
 
         <activity android:name=".LauncherActivity"
             android:theme="@style/AppTheme.NoActionBar"/>

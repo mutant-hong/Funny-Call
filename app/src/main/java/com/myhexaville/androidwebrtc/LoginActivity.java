@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -20,6 +21,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,6 +42,11 @@ public class LoginActivity extends AppCompatActivity {
 
     SharedPreferences pref;
     SharedPreferences.Editor editor;
+
+
+    //retrofit Test
+    private TextView textViewResult;
+    private JsonPlaceHolderApi jsonPlaceHolderApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +72,85 @@ public class LoginActivity extends AppCompatActivity {
 //
 //        Toast.makeText(this, pref2.getString("token",""), Toast.LENGTH_SHORT).show();
 
+        textViewResult = (TextView)findViewById(R.id.text_view_result);
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://jsonplaceholder.typicode.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+
+        getPosts();
+        //getComments();
+
+    }
+
+    private void getPosts(){
+        Call<List<Post>> call = jsonPlaceHolderApi.getPosts(4, "id", "desc");
+
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+
+                //Url로 접근 실패시
+                if(!response.isSuccessful()){
+                    textViewResult.setText("Code: " + response.code());
+                    return;
+                }
+
+                List<Post> posts = response.body();
+
+                for(Post post : posts){
+                    String content = "";
+                    content += "ID : " + post.getId() + "\n";
+                    content += "User ID : " + post.getUserId() + "\n";
+                    content += "Title : " + post.getTitle() + "\n";
+                    content += "Text : " + post.getText() + "\n";
+
+                    textViewResult.append(content);
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getComments(){
+        Call<List<Comment>> call = jsonPlaceHolderApi.getComments(3);
+
+        call.enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                if(!response.isSuccessful()){
+                    textViewResult.setText("Code: " + response.code());
+                    return;
+                }
+
+                List<Comment> comments = response.body();
+
+                for(Comment comment : comments){
+                    String content = "";
+                    content += "ID : " + comment.getId() + "\n";
+                    content += "Post ID : " + comment.getPostId() + "\n";
+                    content += "Name : " + comment.getName() + "\n";
+                    content += "Email : " + comment.getEmail() + "\n";
+                    content += "Text : " + comment.getText() + "\n";
+
+                    textViewResult.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+            }
+        });
     }
 
     @Override

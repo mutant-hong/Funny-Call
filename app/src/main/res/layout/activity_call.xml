@@ -94,11 +94,94 @@
                         android:background="@android:drawable/ic_btn_speak_now"
                         android:contentDescription="@string/toggle_mic" />
 
-                    <Button
-                        android:id="@+id/faceBtn"
+                    <ImageButton
+                        android:id="@+id/funcBtn"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:text="ㅇ"/>
+                        android:background="@drawable/function"/>
+                </LinearLayout>
+
+                <!--<Button-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/onoff"-->
+                    <!--android:visibility="gone"-->
+                    <!--android:text="off"/>-->
+
+                <LinearLayout
+                    android:id="@+id/funcLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:background="#ffffff"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="visible"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="20dp">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:src="@drawable/mask_now"
+                            android:id="@+id/maskBtn"
+                            android:background="#EAEAEA"
+                            android:layout_weight="1"/>
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:src="@drawable/voice"
+                            android:id="@+id/voiceBtn"
+                            android:background="#EAEAEA"
+                            android:layout_weight="1"/>
+
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/faceBtn"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/face"
+                        android:visibility="visible"/>
+
+                    <TextView
+                        android:id="@+id/pitch_show"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="톤: 0"
+                        android:textSize="20dp"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <SeekBar
+                            android:id="@+id/pitch_seek"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:max="3000"
+                            android:progress="1000"
+                            android:visibility="gone"/>
+
+                        <Button
+                            android:id="@+id/button_reset_pitch"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="reset"
+                            android:visibility="gone"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
                 <TextView

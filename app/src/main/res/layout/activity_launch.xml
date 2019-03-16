@@ -102,13 +102,21 @@
         android:orientation="vertical"
         android:layout_gravity="bottom"
         android:layout_marginBottom="50dp"
-        android:visibility="gone">
+        >
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="OpencvTest"
-            android:id="@+id/opencv"/>
+            android:id="@+id/opencv"
+            android:visibility="gone"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test"
+            android:id="@+id/test"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
