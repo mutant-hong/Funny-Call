@@ -12,6 +12,7 @@ package com.myhexaville.androidwebrtc.app_rtc_sample.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -88,6 +89,8 @@ public class PercentFrameLayout extends ViewGroup {
                 final int childLeft = subLeft + (subWidth - childWidth) / 2;
                 final int childTop = subTop + (subHeight - childHeight) / 2;
                 child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+
+                Log.d("child", childLeft + " / " + childTop  + " / " +  (childLeft + childWidth)  + " / " +  (childTop + childHeight));
             }
         }
     }

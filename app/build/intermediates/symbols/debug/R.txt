@@ -1054,7 +1054,7 @@ int id linearLayout1 0x7f0900a2
 int id list 0x7f0900a3
 int id listMode 0x7f0900a4
 int id list_item 0x7f0900a5
-int id local_video_image 0x7f0900a6
+int id local_mask 0x7f0900a6
 int id local_video_layout 0x7f0900a7
 int id local_video_view 0x7f0900a8
 int id log 0x7f0900a9
@@ -1096,8 +1096,8 @@ int id rectangle 0x7f0900cc
 int id recycler 0x7f0900cd
 int id recycler_apply 0x7f0900ce
 int id recycler_req 0x7f0900cf
-int id remote_text 0x7f0900d0
-int id remote_video_image 0x7f0900d1
+int id remote_mask 0x7f0900d0
+int id remote_text 0x7f0900d1
 int id remote_video_layout 0x7f0900d2
 int id remote_video_view 0x7f0900d3
 int id right 0x7f0900d4

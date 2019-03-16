@@ -1055,7 +1055,7 @@ id linearLayout1
 id list
 id listMode
 id list_item
-id local_video_image
+id local_mask
 id local_video_layout
 id local_video_view
 id log
@@ -1097,8 +1097,8 @@ id rectangle
 id recycler
 id recycler_apply
 id recycler_req
+id remote_mask
 id remote_text
-id remote_video_image
 id remote_video_layout
 id remote_video_view
 id right

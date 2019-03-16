@@ -151,7 +151,6 @@ public class CallActivity extends AppCompatActivity
     SoundTouch soundTouch;
 
     boolean funcOnOff = false;
-    boolean isMask = false;
 
 
     @Override
@@ -176,11 +175,13 @@ public class CallActivity extends AppCompatActivity
 
         //faceDetector 추가
         myPaint = new Paint();
+        myPaint.setAntiAlias(true);
         myPaint.setColor(Color.BLACK);
 //        myPaint.setStyle(Paint.Style.STROKE);
 //        myPaint.setStrokeWidth(5);
 
         myPaint2 = new Paint();
+        myPaint2.setAntiAlias(true);
         myPaint2.setColor(Color.BLACK);
         myPaint2.setStrokeWidth(10);
 
@@ -326,12 +327,12 @@ public class CallActivity extends AppCompatActivity
                     binding.faceBtn.setBackgroundResource(R.drawable.face);
 
                     //내 화면 초기화
-                    mbitmap = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
-
-                    canvas = new Canvas(mbitmap);
-                    canvas.drawColor(Color.TRANSPARENT);
-
-                    binding.localVideoImage.setImageBitmap(mbitmap);
+//                    mbitmap = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+//
+//                    canvas = new Canvas(mbitmap);
+//                    canvas.drawColor(Color.TRANSPARENT);
+//
+//                    binding.localVideoImage.setImageBitmap(mbitmap);
 
                     //상대방에게 인식 그만 보내기
                     String msg= "null";
@@ -339,7 +340,11 @@ public class CallActivity extends AppCompatActivity
                     SendToServerThread thread=new SendToServerThread(member_socket,msg);
                     thread.start();
 
-                    noisePos = null;
+                    binding.localMask.noiseX = 0;
+                    binding.localMask.noiseY = 0;
+
+                    binding.localMask.invalidate();
+
                 }
             }
         });
@@ -495,12 +500,12 @@ public class CallActivity extends AppCompatActivity
 
                                 Log.d("length", split.length + "");
 
-                                mbitmap2 = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
-
-                                canvas = new Canvas(mbitmap2);
-                                canvas.drawColor(Color.TRANSPARENT);
-
-                                binding.remoteVideoImage.setImageBitmap(mbitmap2);
+//                                mbitmap2 = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+//
+//                                canvas = new Canvas(mbitmap2);
+//                                canvas.drawColor(Color.TRANSPARENT);
+//
+//                                binding.remoteVideoImage.setImageBitmap(mbitmap2);
 
                                 if(split.length == 3){
                                     noiseX = Float.parseFloat(split[1]);
@@ -511,6 +516,11 @@ public class CallActivity extends AppCompatActivity
                                         public void run() {
 
                                             try {
+                                                binding.remoteMask.noiseX = noiseX;
+                                                binding.remoteMask.noiseY = noiseY;
+
+                                                binding.remoteMask.invalidate();
+                                                /*
                                                 mbitmap2 = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
 
                                                 canvas = new Canvas(mbitmap2);
@@ -539,19 +549,27 @@ public class CallActivity extends AppCompatActivity
                                                 canvas.drawLine(rightBotX, rightBotY, rightBotX + 300, rightBotY + 100, myPaint2);
 
                                                 //초기화
-                                                noiseX = 0;
-                                                noiseY = 0;
+//                                                noiseX = 0;
+//                                                noiseY = 0;
+                                                binding.remoteVideoImage.invalidate();
+
                                                 //split[1] = null;
                                                 //split[2] = null;
 
                                                 Log.d("faceXY2", noiseX + ", " + noiseY);
                                                 //Log.d("split", split[1] + ", " + split[2]);
-
+                                                */
                                             }catch (Exception e){
 
                                             }
                                         }
                                     });
+                                }
+                                if(split[1].equals("null")){
+                                    binding.remoteMask.noiseX = 0;
+                                    binding.remoteMask.noiseY = 0;
+
+                                    binding.remoteMask.invalidate();
                                 }
                             }
                         }
@@ -585,9 +603,9 @@ public class CallActivity extends AppCompatActivity
         public void run() {
             try{
                 // 서버로 데이터를 보낸다.
-                if(!local)
-                    dos.writeUTF("null");
-                else
+//                if(!local)
+//                    dos.writeUTF("null");
+//                else
                     dos.writeUTF(msg);
 
                 runOnUiThread(new Runnable() {
@@ -684,18 +702,38 @@ public class CallActivity extends AppCompatActivity
             CallActivity.this.runOnUiThread(new Runnable() {
 
                 public void run() {
-                    mbitmap = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+//                    mbitmap = Bitmap.createBitmap(1440, 2560, Bitmap.Config.ARGB_8888);
+//
+//                    canvas = new Canvas(mbitmap);
+//                    canvas.drawColor(Color.TRANSPARENT);
+//
+//                    binding.localVideoImage.setImageBitmap(mbitmap);
 
-                    canvas = new Canvas(mbitmap);
-                    canvas.drawColor(Color.TRANSPARENT);
 
-                    binding.localVideoImage.setImageBitmap(mbitmap);
-
-
-                    Log.d("dsds", binding.localVideoImage.getWidth() + ", " + binding.localVideoImage.getHeight());
+                    //Log.d("dsds", binding.localVideoImage.getWidth() + ", " + binding.localVideoImage.getHeight());
                     Log.d("runOnUiThread", "runOnUiThread -> setImageBitmap");
 
                     try {
+                        //서버로 좌표 보내기
+                        if(noisePos != null && isConnect == true){
+                            String msg= noisePos.getX() + " : " + noisePos.getY();
+                            // 송신 스레드 가동
+                            SendToServerThread thread=new SendToServerThread(member_socket,msg);
+                            thread.start();
+
+                            binding.localMask.noiseX = noisePos.getX();
+                            binding.localMask.noiseY = noisePos.getY();
+
+                        } else if(noisePos == null){
+
+                            binding.localMask.noiseX = 0;
+                            binding.localMask.noiseY = 0;
+                        }
+
+                        binding.localMask.invalidate();
+
+                        //noisePos = null;
+                        /*
                         Log.d("faceRect", "l : "+ r.left + ", t : " + r.top + ", r : " + r.right + ", b : " + r.bottom);
                         Log.d("noise", noisePos.getX() + ", " + noisePos.getY() + ", " + noisePos.getZ());
 
@@ -732,15 +770,16 @@ public class CallActivity extends AppCompatActivity
                         //초기화
                         noisePos = null;
                         r = null;
+                        */
                     }catch (Exception e){
 
                     }
 
                     if(noisePos == null){// || binding.faceBtn.getResources().equals(R.drawable.face_now)){
-                        String msg= "null";
+                        //String msg= "null";
                         // 송신 스레드 가동
-                        SendToServerThread thread=new SendToServerThread(member_socket,msg);
-                        thread.start();
+                        //SendToServerThread thread=new SendToServerThread(member_socket,msg);
+                        //thread.start();
                     }
 
                 }
@@ -750,7 +789,7 @@ public class CallActivity extends AppCompatActivity
         });
 
     }
-
+/*
     private void detectRemoteFace(Bitmap bitmap){
 
         Log.d("remote", binding.remoteVideoView.getWidth() + ", " + binding.remoteVideoView.getHeight());
@@ -826,7 +865,7 @@ public class CallActivity extends AppCompatActivity
         });
 
     }
-
+*/
     protected synchronized void runInBackground(final Runnable r) {
         if (handler != null) {
             handler.post(r);
@@ -1016,6 +1055,8 @@ public class CallActivity extends AppCompatActivity
 
         binding.localVideoView.requestLayout();
         binding.remoteVideoView.requestLayout();
+
+        Log.d("localVideoLayout",LOCAL_X_CONNECTED + " / " + LOCAL_Y_CONNECTED + " / " + LOCAL_WIDTH_CONNECTED + " / " + LOCAL_HEIGHT_CONNECTED);
     }
 
     private void startCall() {

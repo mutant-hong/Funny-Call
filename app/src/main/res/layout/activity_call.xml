@@ -16,11 +16,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/remote_video_image"
-                android:scaleType="fitXY"/>
+            <!--<ImageView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/remote_video_image"-->
+                <!--android:scaleType="fitXY"/>-->
+            <com.myhexaville.androidwebrtc.app_rtc_sample.call.Cat
+                android:id="@+id/remote_mask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
         </com.myhexaville.androidwebrtc.app_rtc_sample.view.PercentFrameLayout>
 
@@ -34,11 +38,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/local_video_image"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+            <!--<ImageView-->
+                <!--android:id="@+id/local_video_image"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:scaleType="fitXY"/>-->
+
+            <com.myhexaville.androidwebrtc.app_rtc_sample.call.LocalCat
+                android:id="@+id/local_mask"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
         </com.myhexaville.androidwebrtc.app_rtc_sample.view.PercentFrameLayout>
 
