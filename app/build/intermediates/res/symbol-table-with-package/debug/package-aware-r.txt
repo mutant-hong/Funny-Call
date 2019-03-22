@@ -859,6 +859,7 @@ drawable googleg_standard_color_18
 drawable history
 drawable history_now
 drawable ic_launcher
+drawable info
 drawable list
 drawable list_now
 drawable main
@@ -880,6 +881,7 @@ drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable play
 drawable record
+drawable sender
 drawable stop
 drawable tab
 drawable test
@@ -927,6 +929,7 @@ id adjust_height
 id adjust_width
 id alertTitle
 id all
+id all_check
 id always
 id any
 id async
@@ -954,6 +957,8 @@ id button_toggle_debug
 id buttons_call_container
 id call
 id call_fragment_container
+id call_kind
+id call_time
 id cancel_action
 id capture_format_slider_call
 id capture_format_text_call
@@ -988,8 +993,10 @@ id custom
 id customPanel
 id dark
 id dataBinding
+id date
 id decor_content_parent
 id default_activity_button
+id del
 id design_bottom_sheet
 id design_menu_item_action_area
 id design_menu_item_action_area_stub
@@ -997,6 +1004,7 @@ id design_menu_item_text
 id design_navigation_view
 id disableHome
 id disconnect
+id edit
 id editTextOutFileName
 id editTextPitch
 id editTextSrcFileName
@@ -1082,6 +1090,7 @@ id onTouch
 id opencv
 id original
 id oval
+id pBar
 id packed
 id parallax
 id parent
@@ -1129,6 +1138,7 @@ id search_src_text
 id search_voice_btn
 id select_dialog_listview
 id send_button
+id sender
 id shortcut
 id showCustom
 id showHome
@@ -1238,11 +1248,14 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_call
+layout activity_callhistory
 layout activity_calling
+layout activity_detailhistory
 layout activity_example
 layout activity_friends
 layout activity_friends_apply_item
 layout activity_friendsitem
+layout activity_historyitem
 layout activity_join
 layout activity_launch
 layout activity_login
@@ -1273,6 +1286,7 @@ layout design_navigation_menu
 layout design_navigation_menu_item
 layout design_text_input_password_icon
 layout fragment_hud
+layout item_progress
 layout notification_action
 layout notification_action_tombstone
 layout notification_media_action

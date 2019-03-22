@@ -73,7 +73,8 @@
 
         <activity android:name=".RecordActivity"/>
         <activity android:name=".RecordTestActivity"/>
-        <activity android:name=".test"/>
+        <activity android:name=".CallHistoryActivity"/>
+        <activity android:name=".DetailHistoryActivity"/>
         <activity android:name=".UdpTest"/>
 
 

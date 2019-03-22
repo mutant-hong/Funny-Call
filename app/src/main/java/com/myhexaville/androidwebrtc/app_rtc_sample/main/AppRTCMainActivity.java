@@ -97,7 +97,7 @@ public class AppRTCMainActivity extends AppCompatActivity {
         pref = getSharedPreferences("login", 0);
         myId = pref.getString("id","");
 
-        //내가 걸었을 때
+        //상대방에게 전화왔을 때
         if(!caller.equals("true"))
             binding.connectButton.performClick();
 
@@ -161,6 +161,8 @@ public class AppRTCMainActivity extends AppCompatActivity {
     private void connectToRoom(String roomId) {
         Intent intent = new Intent(this, CallActivity.class);
         intent.putExtra(EXTRA_ROOMID, roomId);
+        intent.putExtra("friendId", binding.roomEdittext.getText().toString());
+        intent.putExtra("caller", caller);
         startActivityForResult(intent, CONNECTION_REQUEST);
 
         if(caller.equals("true")){
@@ -173,7 +175,7 @@ public class AppRTCMainActivity extends AppCompatActivity {
 
     }
 
-    //친구 추가
+    //전화 알림
     class callNoti extends AsyncTask<String, Void, String> {
 
         @Override

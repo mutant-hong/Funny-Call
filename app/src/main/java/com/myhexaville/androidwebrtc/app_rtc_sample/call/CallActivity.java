@@ -10,16 +10,19 @@
 
 package com.myhexaville.androidwebrtc.app_rtc_sample.call;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -42,6 +45,7 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceLandmark;
 import com.myhexaville.androidwebrtc.AudioConnection;
+import com.myhexaville.androidwebrtc.CallDataDB;
 import com.myhexaville.androidwebrtc.R;
 import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCAudioManager;
 import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient;
@@ -64,11 +68,16 @@ import org.webrtc.StatsReport;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoRenderer;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.Socket;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -115,6 +124,14 @@ public class CallActivity extends AppCompatActivity
     private boolean iceConnected;
     private boolean isError;
     private long callStartedTimeMs;
+
+    //통화 시간 기록 & 상대방 아이디
+    long callTime;
+    String friendId;
+    String caller;
+    CallDataDB callDataDB;
+    SQLiteDatabase database;
+
     private boolean micEnabled = true;
 
     private ActivityCallBinding binding;
@@ -152,6 +169,7 @@ public class CallActivity extends AppCompatActivity
 
     boolean funcOnOff = false;
 
+    public static Activity Call;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -161,6 +179,8 @@ public class CallActivity extends AppCompatActivity
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_call);
+
+        Call = CallActivity.this;
 
         remoteRenderers.add(binding.remoteVideoView);
 
@@ -368,6 +388,9 @@ public class CallActivity extends AppCompatActivity
         // Get Intent parameters.
         final Intent intent = getIntent();
         String roomId = intent.getStringExtra(EXTRA_ROOMID);
+        friendId = intent.getStringExtra("friendId");
+        caller = intent.getStringExtra("caller");
+
         Log.d(LOG_TAG, "Room ID: " + roomId);
         if (roomId == null || roomId.length() == 0) {
             logAndToast(getString(R.string.missing_url));
@@ -984,6 +1007,26 @@ public class CallActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         disconnect();
+
+        long currentTime = System.currentTimeMillis();
+
+        //통화 기록 저장
+        if(callTime != 0) {
+            callTime = currentTime - callTime;
+        }
+
+        SimpleDateFormat dataformat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분");
+        String date = dataformat.format(currentTime);
+
+        callDataDB = new CallDataDB(CallActivity.this, CallDataDB.tableName, null, 1);
+        database = callDataDB.getWritableDatabase();
+
+        callDataDB.insertData(database, friendId, date, callTime, caller, "false");
+
+        Log.d("통화 기록 : ", "상대방 : " + friendId + " / 날짜 : " + date + " / 통화 시간 : " + callTime + " / 발신자 인가 : " + caller);
+
+
+
         if (logToast != null) {
             logToast.cancel();
         }
@@ -1011,6 +1054,13 @@ public class CallActivity extends AppCompatActivity
     // CallFragment.OnCallEvents interface implementation.
     @Override
     public void onCallHangUp() {
+
+        //발신 취소
+        if(callTime == 0){
+            cancleNoti task = new cancleNoti();
+            task.execute("http://" + "115.68.216.237" + "/faceToface/callNoti.php", myId, friendId, "발신취소");
+        }
+
         disconnect();
     }
 
@@ -1030,11 +1080,24 @@ public class CallActivity extends AppCompatActivity
 
     @Override
     public boolean onToggleMic() {
-        if (peerConnectionClient != null) {
-            micEnabled = !micEnabled;
-            peerConnectionClient.setAudioEnabled(micEnabled);
+//        if (peerConnectionClient != null) {
+//            micEnabled = !micEnabled;
+//            peerConnectionClient.setAudioEnabled(micEnabled);
+//        }
+//        return micEnabled;
+
+        if(micEnabled) {
+            audioConnection.stopStreamingAudio();
+            micEnabled = false;
         }
+        else {
+            audioConnection.sender = true;
+            audioConnection.startStreaming();
+            micEnabled = true;
+        }
+
         return micEnabled;
+
     }
 
     private void updateVideoView() {
@@ -1078,6 +1141,9 @@ public class CallActivity extends AppCompatActivity
     // Should be called from UI thread
     private void callConnected() {
         final long delta = System.currentTimeMillis() - callStartedTimeMs;
+
+        callTime = System.currentTimeMillis();
+
         Log.i(LOG_TAG, "Call connected: delay=" + delta + "ms");
         if (peerConnectionClient == null || isError) {
             Log.w(LOG_TAG, "Call is connected in closed or error state");
@@ -1120,6 +1186,7 @@ public class CallActivity extends AppCompatActivity
         } else {
             setResult(RESULT_CANCELED);
         }
+
         finish();
     }
 
@@ -1346,5 +1413,86 @@ public class CallActivity extends AppCompatActivity
     @Override
     public void onPeerConnectionError(final String description) {
         reportError(description);
+    }
+
+    //취소 알림
+    class cancleNoti extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            Log.d("AppRTCMainActivity", "POST response  - " + result);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String myId = (String)params[1];
+            String friendId = (String)params[2];
+            String roomId = (String)params[3];
+
+            String serverURL = (String)params[0];
+            String postParameters = "myId=" + myId + "&friendId=" + friendId + "&roomId=" + roomId;
+
+
+            try {
+
+                URL url = new URL(serverURL);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+
+
+                httpURLConnection.setReadTimeout(5000);
+                httpURLConnection.setConnectTimeout(5000);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.connect();
+
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                outputStream.write(postParameters.getBytes("UTF-8"));
+                outputStream.flush();
+                outputStream.close();
+
+
+                int responseStatusCode = httpURLConnection.getResponseCode();
+                Log.d("AppRTCMainActivity", "POST response code - " + responseStatusCode);
+
+                InputStream inputStream;
+                if(responseStatusCode == HttpURLConnection.HTTP_OK) {
+                    inputStream = httpURLConnection.getInputStream();
+                }
+                else{
+                    inputStream = httpURLConnection.getErrorStream();
+                }
+
+
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+
+                while((line = bufferedReader.readLine()) != null){
+                    sb.append(line);
+                }
+
+                bufferedReader.close();
+
+                return sb.toString();
+
+            } catch (Exception e) {
+
+                Log.d("AppRTCMainActivity", "InsertData: Error ", e);
+
+                return new String("Error: " + e.getMessage());
+            }
+
+        }
     }
 }

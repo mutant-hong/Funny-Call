@@ -145,6 +145,16 @@ public class FriendsActivity extends AppCompatActivity implements SwipeRefreshLa
         */
 
         //탭
+        history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CallHistoryActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+
         list.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

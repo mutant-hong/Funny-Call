@@ -95,10 +95,10 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
         history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), UdpTest.class);
+                Intent intent = new Intent(getApplicationContext(), CallHistoryActivity.class);
                 startActivity(intent);
-                //overridePendingTransition(0,0);
-                //finish();
+                overridePendingTransition(0,0);
+                finish();
             }
         });
 

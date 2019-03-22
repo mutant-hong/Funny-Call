@@ -59,7 +59,7 @@ public class AudioConnection {
         //audioTrack.release();
     }
 
-    private void startStreaming() {
+    public void startStreaming() {
         Log.i(TAG, "Starting the background thread to stream the audio data");
 
         Thread streamThread = new Thread(new Runnable() {
@@ -88,7 +88,7 @@ public class AudioConnection {
 
                     while (sender) {
 
-                        Log.d("while", buffer.length + "");
+                        //Log.d("while", buffer.length + "");
                         // read the data into the buffer
                         int read = recorder.read(buffer, 0, buffer.length);
 

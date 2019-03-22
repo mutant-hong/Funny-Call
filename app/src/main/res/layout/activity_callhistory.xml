@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:text="     지우기"
+            android:textSize="20dp"
+            android:textColor="#FF0000"
+            android:gravity="left"
+            android:visibility="invisible"
+            android:id="@+id/del"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:text="편집     "
+            android:textSize="20dp"
+            android:textColor="#1245AB"
+            android:gravity="right"
+            android:id="@+id/edit"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체 선택"
+            android:visibility="gone"
+            android:id="@+id/all_check"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="통화 기록"
+            android:textAlignment="center"
+            android:textSize="25dp"
+            android:layout_margin="10dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="50"
+        android:id="@+id/recycler">
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/list"
+            android:background="@drawable/tab"
+            android:id="@+id/list"
+            android:padding="10dp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/history_now"
+            android:background="@drawable/tab"
+            android:id="@+id/history"
+            android:padding="10dp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/friends"
+            android:background="@drawable/tab"
+            android:id="@+id/friends"
+            android:padding="10dp"/>
+
+    </LinearLayout>
+</LinearLayout>

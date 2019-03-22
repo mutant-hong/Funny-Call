@@ -17,8 +17,6 @@ import android.util.Log;
 
 import com.myhexaville.androidwebrtc.app_rtc_sample.web_rtc.AppRTCClient.SignalingParameters;
 
-import org.webrtc.AudioSource;
-import org.webrtc.AudioTrack;
 import org.webrtc.CameraVideoCapturer;
 import org.webrtc.DataChannel;
 import org.webrtc.EglBase;
@@ -93,7 +91,7 @@ public class PeerConnectionClient {
     private PeerConnectionFactory factory;
     private PeerConnection peerConnection;
     PeerConnectionFactory.Options options = null;
-    private AudioSource audioSource;
+    //private AudioSource audioSource;
     private VideoSource videoSource;
     private boolean videoCallEnabled;
     private boolean preferIsac;
@@ -128,7 +126,7 @@ public class PeerConnectionClient {
     private RtpSender localVideoSender;
     // enableAudio is set to true if audio should be sent.
     private boolean enableAudio;
-    private AudioTrack localAudioTrack;
+    //private AudioTrack localAudioTrack;
     private DataChannel dataChannel;
     private boolean dataChannelEnabled;
 
@@ -320,7 +318,7 @@ public class PeerConnectionClient {
         remoteVideoTrack = null;
         localVideoSender = null;
         enableAudio = true;
-        localAudioTrack = null;
+        //localAudioTrack = null;
         statsTimer = new Timer();
 
         executor.execute(() -> createPeerConnectionFactoryInternal(context));
@@ -554,7 +552,7 @@ public class PeerConnectionClient {
             mediaStream.addTrack(createVideoTrack(videoCapturer));
         }
 
-        mediaStream.addTrack(createAudioTrack());
+        //mediaStream.addTrack(createAudioTrack());
         peerConnection.addStream(mediaStream);
         if (videoCallEnabled) {
             findVideoSender();
@@ -591,10 +589,10 @@ public class PeerConnectionClient {
             peerConnection = null;
         }
         Log.d(TAG, "Closing audio source.");
-        if (audioSource != null) {
-            audioSource.dispose();
-            audioSource = null;
-        }
+//        if (audioSource != null) {
+//            audioSource.dispose();
+//            audioSource = null;
+//        }
         Log.d(TAG, "Stopping capture.");
         if (videoCapturer != null) {
             try {
@@ -666,9 +664,9 @@ public class PeerConnectionClient {
     public void setAudioEnabled(final boolean enable) {
         executor.execute(() -> {
             enableAudio = enable;
-            if (localAudioTrack != null) {
-                localAudioTrack.setEnabled(enableAudio);
-            }
+//            if (localAudioTrack != null) {
+//                localAudioTrack.setEnabled(enableAudio);
+//            }
         });
     }
 
@@ -832,12 +830,12 @@ public class PeerConnectionClient {
         });
     }
 
-    private AudioTrack createAudioTrack() {
-        audioSource = factory.createAudioSource(audioConstraints);
-        localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
-        localAudioTrack.setEnabled(enableAudio);
-        return localAudioTrack;
-    }
+//    private AudioTrack createAudioTrack() {
+//        audioSource = factory.createAudioSource(audioConstraints);
+//        localAudioTrack = factory.createAudioTrack(AUDIO_TRACK_ID, audioSource);
+//        localAudioTrack.setEnabled(enableAudio);
+//        return localAudioTrack;
+//    }
 
     private VideoTrack createVideoTrack(VideoCapturer capturer) {
         videoSource = factory.createVideoSource(capturer);

@@ -6,17 +6,24 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.firebase.messaging.RemoteMessage;
+import com.myhexaville.androidwebrtc.app_rtc_sample.call.CallActivity;
 import com.myhexaville.androidwebrtc.app_rtc_sample.main.AppRTCMainActivity;
+
+import java.text.SimpleDateFormat;
 
 
 public class MyFirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
     private static final String TAG = "FirebaseMsgService";
+
+    CallDataDB callDataDB;
+    SQLiteDatabase database;
 
     // [START receive_message]
     @Override
@@ -39,10 +46,17 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
         if(title.equals("친구요청")){
             sendNotificationAddFriends(title, body);
         }
-
         else{
-            //sendNotification(title, body);
-            sendCallingActivity(title, body);
+            if(body.equals("수신거부")){
+                refuseCall(title);
+            }
+            else if(body.equals("발신취소")){
+                cancleCall(title);
+            }
+            else {
+                //sendNotification(title, body);
+                sendCallingActivity(title, body);
+            }
         }
 
     }
@@ -55,6 +69,35 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
         intent.putExtra("caller", "false");
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    //수신 거부
+    private void refuseCall(String friendId){
+//        Intent intent = new Intent(this, AppRTCMainActivity.class);
+//        intent.addFlags(intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivity(intent);
+        CallActivity.Call.finish();
+//
+//        SimpleDateFormat dataformat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분");
+//        String date = dataformat.format(System.currentTimeMillis());
+//
+//        callDataDB = new CallDataDB(this, CallDataDB.tableName, null, 1);
+//        database = callDataDB.getWritableDatabase();
+//
+//        callDataDB.insertData(database, friendId + "수신거부", date, 0, "true");
+    }
+
+    //발신취소
+    private void cancleCall(String friendId){
+        CallingActivity.Calling.finish();
+
+        SimpleDateFormat dataformat = new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분");
+        String date = dataformat.format(System.currentTimeMillis());
+
+        callDataDB = new CallDataDB(this, CallDataDB.tableName, null, 1);
+        database = callDataDB.getWritableDatabase();
+
+        callDataDB.insertData(database, friendId, date, 0, "false", "true");
     }
 
     //영상 통화 알림
