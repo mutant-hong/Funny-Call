@@ -116,7 +116,7 @@ public class LauncherActivity extends AppCompatActivity implements SwipeRefreshL
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RecordActivity.class);
+                Intent intent = new Intent(getApplicationContext(), GameLobbyActivity.class);
                 startActivity(intent);
                 //finish();
             }

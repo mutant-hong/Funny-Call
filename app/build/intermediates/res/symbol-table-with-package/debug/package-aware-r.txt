@@ -977,6 +977,8 @@ id chronometer
 id clip_horizontal
 id clip_vertical
 id collapseActionView
+id connectId
+id connectList
 id connect_button
 id contact_name_call
 id container
@@ -1033,6 +1035,7 @@ id front
 id funcBtn
 id funcLayout
 id ghost_view
+id go
 id history
 id home
 id homeAsUp
@@ -1048,6 +1051,9 @@ id ifRoom
 id image
 id image2
 id info
+id inviteBtn
+id inviteId
+id inviteList
 id italic
 id item_touch_helper_previous_elevation
 id joinBtn
@@ -1099,6 +1105,8 @@ id parent_matrix
 id pin
 id pitch_seek
 id pitch_show
+id player1
+id player2
 id progress_circular
 id progress_horizontal
 id radio
@@ -1255,6 +1263,8 @@ layout activity_example
 layout activity_friends
 layout activity_friends_apply_item
 layout activity_friendsitem
+layout activity_game_lobby
+layout activity_game_room
 layout activity_historyitem
 layout activity_join
 layout activity_launch

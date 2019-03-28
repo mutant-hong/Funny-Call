@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
-INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
-INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
-INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
+INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
+INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
+INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
 MERGED from [com.android.databinding:adapters:3.2.1] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/adapters-3.2.1.aar/06c728d3d306a0fffa2f8c96f4ed6c16/AndroidManifest.xml:17:1-24:12
 MERGED from [com.android.databinding:library:3.2.1] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/library-3.2.1.aar/47890147e9b70e0832d47b488a196443/AndroidManifest.xml:17:1-24:12
 MERGED from [com.android.support.constraint:constraint-layout:1.0.2] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.0.2.aar/d0f37e5cb2c37f774838920074892549/AndroidManifest.xml:2:1-11:12
@@ -57,20 +57,20 @@ MERGED from [android.arch.core:runtime:1.1.0] /Users/jihongbyun/.gradle/caches/t
 MERGED from [androidx.exifinterface:exifinterface:1.0.0] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/exifinterface-1.0.0.aar/83617016650cfcb2ba6eb32353fe853e/AndroidManifest.xml:17:1-22:12
 MERGED from [com.google.android.gms:play-services-measurement-base:16.0.3] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/play-services-measurement-base-16.0.3.aar/85a93bd280bf0be11bab0fa2f875716f/AndroidManifest.xml:2:1-9:12
 MERGED from [android.arch.lifecycle:viewmodel:1.1.0] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/viewmodel-1.1.0.aar/00af2ceb0997356741e35f412907c3b7/AndroidManifest.xml:17:1-22:12
-INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
-INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
-INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
+INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
+INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
+INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
 	package
 		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:3:5-44
 		INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml
 		INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
 		INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml
 	android:versionCode
 		INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-129:12
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:1-140:12
 		INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:2:11-69
@@ -167,7 +167,7 @@ ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/Androi
 	android:anyDensity
 		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:29:9-34
 application
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:31:5-127:19
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:31:5-138:19
 MERGED from [com.android.support.constraint:constraint-layout:1.0.2] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.0.2.aar/d0f37e5cb2c37f774838920074892549/AndroidManifest.xml:9:5-20
 MERGED from [com.android.support.constraint:constraint-layout:1.0.2] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/constraint-layout-1.0.2.aar/d0f37e5cb2c37f774838920074892549/AndroidManifest.xml:9:5-20
 MERGED from [com.myhexaville:smart-image-picker:1.0.4] /Users/jihongbyun/.gradle/caches/transforms-1/files-1.1/smart-image-picker-1.0.4.aar/ea71778cebaf32bed7f4aac6e96656c7/AndroidManifest.xml:14:5-32:19
@@ -312,72 +312,96 @@ activity#com.myhexaville.androidwebrtc.UdpTest
 ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:78:9-44
 	android:name
 		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:78:19-42
+activity#com.myhexaville.androidwebrtc.GameLobbyActivity
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:79:9-54
+	android:name
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:79:19-52
+activity#com.myhexaville.androidwebrtc.GameRoomActivity
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:80:9-53
+	android:name
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:80:19-51
+activity#com.myhexaville.androidwebrtc.UnityPlayerActivity
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:82:9-90:20
+	android:process
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:85:13-43
+	android:launchMode
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:83:13-44
+	android:configChanges
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:84:13-186
+	android:name
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:82:19-54
+intent-filter#category:name:android.intent.category.LAUNCHER+category:name:com.google.intent.category.CARDBOARD
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:86:9-89:25
+category#com.google.intent.category.CARDBOARD
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:88:13-77
+	android:name
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:88:23-74
 activity#com.myhexaville.androidwebrtc.LauncherActivity
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:81:9-82:58
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:92:9-93:58
 	android:theme
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:82:13-56
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:93:13-56
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:81:19-51
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:92:19-51
 activity#com.myhexaville.androidwebrtc.tutorial.CameraRenderActivity
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:84:9-87:59
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:95:9-98:59
 	android:label
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:86:13-45
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:97:13-45
 	android:theme
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:87:13-56
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:98:13-56
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:85:13-58
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:96:13-58
 activity#com.myhexaville.androidwebrtc.tutorial.MediaStreamActivity
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:89:9-92:59
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:100:9-103:59
 	android:label
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:91:13-74
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:102:13-74
 	android:theme
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:92:13-56
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:103:13-56
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:90:13-57
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:101:13-57
 activity#com.myhexaville.androidwebrtc.OpencvActivity
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:94:9-97:65
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:105:9-108:65
 	android:screenOrientation
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:96:13-50
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:107:13-50
 	android:configChanges
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:97:13-63
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:108:13-63
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:95:13-43
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:106:13-43
 activity#com.myhexaville.androidwebrtc.tutorial.DataChannelActivity
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:99:9-102:59
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:110:9-113:59
 	android:label
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:101:13-71
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:112:13-71
 	android:theme
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:102:13-56
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:113:13-56
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:100:13-57
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:111:13-57
 activity#com.myhexaville.androidwebrtc.FriendsActivity
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:110:9-112:67
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:121:9-123:67
 	android:windowSoftInputMode
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:112:13-65
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:123:13-65
 	android:configChanges
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:111:13-59
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:122:13-59
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:110:19-50
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:121:19-50
 service#com.myhexaville.androidwebrtc.MyFirebaseMessagingService
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:114:9-119:19
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:125:9-130:19
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:115:13-55
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:126:13-55
 intent-filter#action:name:com.google.firebase.MESSAGING_EVENT
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:116:13-118:29
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:127:13-129:29
 action#com.google.firebase.MESSAGING_EVENT
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:117:17-78
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:128:17-78
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:117:25-75
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:128:25-75
 service#com.myhexaville.androidwebrtc.MyFirebaseInstanceIDService
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:120:9-125:19
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:131:9-136:19
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:121:13-56
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:132:13-56
 intent-filter#action:name:com.google.firebase.INSTANCE_ID_EVENT
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:122:13-124:29
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:133:13-135:29
 action#com.google.firebase.INSTANCE_ID_EVENT
-ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:123:17-80
+ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:134:17-80
 	android:name
-		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:123:25-77
+		ADDED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml:134:25-77
 uses-sdk
 INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/jihongbyun/Downloads/Android-WebRtc-master/app/src/main/AndroidManifest.xml

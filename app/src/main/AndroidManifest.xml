@@ -76,7 +76,18 @@
         <activity android:name=".CallHistoryActivity"/>
         <activity android:name=".DetailHistoryActivity"/>
         <activity android:name=".UdpTest"/>
+        <activity android:name=".GameLobbyActivity"/>
+        <activity android:name=".GameRoomActivity"/>
 
+        <activity android:name=".UnityPlayerActivity"
+            android:launchMode="singleTask"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection"
+            android:process=":unityplayer">
+        <intent-filter>
+            <category android:name="android.intent.category.LAUNCHER" />
+            <category android:name="com.google.intent.category.CARDBOARD" />
+        </intent-filter>
+        </activity>
 
         <activity android:name=".LauncherActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
