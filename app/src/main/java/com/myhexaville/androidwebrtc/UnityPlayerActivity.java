@@ -71,7 +71,7 @@ public class UnityPlayerActivity extends Activity
     {
         mUnityPlayer.quit();
         super.onDestroy();
-
+        Log.d("UnityPlayerActivity", "onDestroy");
         try{
             member_socket.close();
             isRunning=false;
@@ -86,6 +86,7 @@ public class UnityPlayerActivity extends Activity
     {
         super.onPause();
         mUnityPlayer.pause();
+        Log.d("UnityPlayerActivity", "onPause");
     }
 
     // Resume Unity
@@ -93,12 +94,14 @@ public class UnityPlayerActivity extends Activity
     {
         super.onResume();
         mUnityPlayer.resume();
+        Log.d("UnityPlayerActivity", "onResume");
     }
 
     @Override protected void onStart()
     {
         super.onStart();
         mUnityPlayer.start();
+        Log.d("UnityPlayerActivity", "onStart");
         mUnityPlayer.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -123,6 +126,7 @@ public class UnityPlayerActivity extends Activity
     {
         super.onStop();
         mUnityPlayer.stop();
+        Log.d("UnityPlayerActivity", "onStop");
     }
 
     // Low Memory Unity

@@ -30,10 +30,13 @@ public class GameLobbyActivity extends AppCompatActivity {
     TextView connectId, inviteId;
     Button inviteBtn, acceptBtn;
 
+    boolean master = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_lobby);
+        Log.d("GameLobbyActivity", "onCreate");
 
         pref = getSharedPreferences("login", 0);
         myId = pref.getString("id","");
@@ -65,21 +68,55 @@ public class GameLobbyActivity extends AppCompatActivity {
                 SendToServerThread thread = new SendToServerThread(member_socket, "수락");
                 thread.start();
 
-                Intent intent = new Intent(getApplicationContext(), GameRoomActivity.class);
-                intent.putExtra("player1", inviteId.getText());
-                intent.putExtra("player2", myId);
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(getApplicationContext(), GameRoomActivity.class);
+//                intent.putExtra("player1", inviteId.getText());
+//                intent.putExtra("player2", myId);
+//                startActivity(intent);
+//                finish();
 
-                try {
-                    isRunning = false;
-                    member_socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    isRunning = false;
+//                    member_socket.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy ()
+    {
+        super.onDestroy();
+        Log.d("GameLobbyActivity", "onDestroy");
+        try {
+            isRunning = false;
+            member_socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Log.d("GameLobbyActivity", "onPause");
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        Log.d("GameLobbyActivity", "onResume");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("GameLobbyActivity", "onStart");
     }
 
     // 서버접속 처리하는 스레드 클래스
@@ -89,7 +126,7 @@ public class GameLobbyActivity extends AppCompatActivity {
         public void run() {
             try {
                 // 접속한다.
-                final Socket socket = new Socket("115.68.216.237", 50001);
+                final Socket socket = new Socket("115.68.216.237", 50002);
                 member_socket=socket;
                 // 미리 입력했던 닉네임을 서버로 전달한다.
                 String nickName = myId;
@@ -138,55 +175,27 @@ public class GameLobbyActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            // 메세지의 시작 이름이 내 닉네임과 일치하지 않으면
+                            // 메세지의 시작 이름이 내 닉네임과 일치하면
                             Log.d("MessageThread", msg);
-                            //초대 목록에 추가
-                            if(!msg.startsWith(myId)){
+
+                            if(msg.startsWith(myId)){
                                 String[] split = msg.split(" : ");
 
-                                if(split[1].equals("초대")){
-                                    inviteId.setText(split[0]);
-                                    inviteList.setVisibility(View.VISIBLE);
-                                }
-
-                                else if(split[1].equals("수락")){
-                                    Intent intent = new Intent(getApplicationContext(), GameRoomActivity.class);
-                                    intent.putExtra("player1", myId);
-                                    intent.putExtra("player2", split[0]);
+                                //방장x
+                                if(split[1].equals("수락")){
+                                    Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                                    intent.putExtra("player1", inviteId.getText());
+                                    intent.putExtra("player2", myId);
+                                    intent.putExtra("master", "false");
                                     startActivity(intent);
                                     finish();
-
-                                    try {
-                                        isRunning = false;
-                                        member_socket.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
                                 }
                             }
-
-                            //접속 목록에 추가
-                            if(msg.startsWith("서버")){
-                                Log.d("서버", msg);
-                                String[] split = msg.split(" : ");
-
-                                if(!split[1].equals(myId)){
-                                    connectId.setText(split[1]);
-                                    connectList.setVisibility(View.VISIBLE);
-                                }
-
-                                if(!split[2].equals(myId)){
-                                    connectId.setText(split[2]);
-                                    connectList.setVisibility(View.VISIBLE);
-                                }
-                                /*
-                                //초대 목록에 추가
-                                if(split[1].equals("초대")){
-
-                                }
-
+                            else{
                                 //접속 목록에 추가
-                                else{
+                                if(msg.startsWith("서버")){
+                                    Log.d("서버", msg);
+                                    String[] split = msg.split(" : ");
 
                                     if(!split[1].equals(myId)){
                                         connectId.setText(split[1]);
@@ -194,14 +203,50 @@ public class GameLobbyActivity extends AppCompatActivity {
                                     }
 
                                     if(!split[2].equals(myId)){
-                                        connectId.setText(split[1]);
+                                        connectId.setText(split[2]);
                                         connectList.setVisibility(View.VISIBLE);
                                     }
 
                                 }
-                                */
 
+                                //초대 목록에 추가
+                                else{
+                                    String[] split = msg.split(" : ");
+
+                                    if(split[1].equals("초대")){
+                                        inviteId.setText(split[0]);
+                                        inviteList.setVisibility(View.VISIBLE);
+                                    }
+                                    //방장일때
+                                    else if(split[1].equals("수락")){
+                                        Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                                        intent.putExtra("player1", myId);
+                                        intent.putExtra("player2", split[0]);
+                                        intent.putExtra("master", "true");
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
                             }
+                            //초대 목록에 추가
+//                            if(!msg.startsWith(myId)){
+//                                String[] split = msg.split(" : ");
+//
+//                                if(split[1].equals("초대")){
+//                                    inviteId.setText(split[0]);
+//                                    inviteList.setVisibility(View.VISIBLE);
+//                                }
+//
+//                                else if(split[1].equals("수락")){
+//                                    Intent intent = new Intent(getApplicationContext(), GameRoomActivity.class);
+//                                    intent.putExtra("player1", myId);
+//                                    intent.putExtra("player2", split[0]);
+//                                    startActivity(intent);
+//                                    finish();
+//                                }
+//                            }
+
+
                         }
                     });
                 }

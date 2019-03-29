@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -102,6 +103,34 @@ public class GameRoomActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy ()
+    {
+        super.onDestroy();
+        Log.d("GameRoomActivity", "onDestroy");
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        Log.d("GameRoomActivity", "onPause");
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        Log.d("GameRoomActivity", "onResume");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("GameRoomActivity", "onStart");
+    }
+
     // 서버접속 처리하는 스레드 클래스
     class ConnectionThread extends Thread {
 
@@ -168,6 +197,7 @@ public class GameRoomActivity extends AppCompatActivity {
                                     intent.putExtra("player2", player2Id);
                                     intent.putExtra("master", Boolean.toString(master));
                                     startActivity(intent);
+                                    finish();
 
                                     try {
                                         isRunning = false;
@@ -175,6 +205,7 @@ public class GameRoomActivity extends AppCompatActivity {
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
+
                                 }
                             }
 
