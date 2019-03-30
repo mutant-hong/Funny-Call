@@ -43,12 +43,12 @@ public class UnityPlayerActivity extends Activity
 
         Intent intent = getIntent();
         player1Id = intent.getStringExtra("player1");
+        Log.d("player1", player1Id);
         player2Id = intent.getStringExtra("player2");
-
+        Log.d("player2", player2Id);
         String master = intent.getStringExtra("master");
-
-        if(master.equals("true"))
-            mUnityPlayer.UnitySendMessage("life", "OnMessageReceived", "true/" + player1Id + "/" + player2Id);
+        Log.d("master", master);
+        mUnityPlayer.UnitySendMessage("life", "OnMessageReceived", master + "/" + player1Id + "/" + player2Id);
 
         pref = getSharedPreferences("login", 0);
         myId = pref.getString("id","");

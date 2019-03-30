@@ -183,8 +183,9 @@ public class GameLobbyActivity extends AppCompatActivity {
 
                                 //방장x
                                 if(split[1].equals("수락")){
+                                    Log.d("p1,p2,master", inviteId.getText().toString() + " / " + myId + " / " + master);
                                     Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                                    intent.putExtra("player1", inviteId.getText());
+                                    intent.putExtra("player1", inviteId.getText().toString());
                                     intent.putExtra("player2", myId);
                                     intent.putExtra("master", "false");
                                     startActivity(intent);
